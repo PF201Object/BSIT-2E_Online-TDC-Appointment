@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block title %}Login - EcoDrive Theory{% endblock %}
+
+{% block content %}
+<div class="glass-panel" style="max-width: 600px; margin: 20px auto;">
+    <div class="form-container">
+        <h2 class="form-title">Welcome Back</h2>
+        <p style="text-align: center; color: #0f5e7a; margin-bottom: 25px;">Unlock your freedom! Your journey starts right here.</p>
+
+        <form method="POST" action="{{ url_for('login') }}">
+            <div class="form-group">
+                <input type="text" name="username" class="form-control" placeholder="Username" required autofocus>
+            </div>
+            <div class="form-group">
+                <input type="password" name="password" class="form-control" placeholder="Password" required>
+            </div>
+            <button type="submit" class="btn-primary">LOGIN</button>
+        </form>
+
+        <div style="text-align: center; margin-top: 25px;">
+            <p class="register-text">Don't have an account? <a href="{{ url_for('register') }}" style="color: #0f5e7a; font-weight: 600; text-decoration: underline;">REGISTER</a></p>
+        </div>
+    </div>
+</div>
+
+<!-- Driving School Callout -->
+<div class="glass-panel" style="margin-top: 20px; text-align: center;">
+    <h2 style="color: #043b50;">DRIVING SCHOOL</h2>
+    <a href="{{ url_for('about') }}" class="btn-secondary" style="margin: 15px 0;">LEARN MORE</a>
+    <p style="font-size: 1.2rem; color: #0f5e7a; font-weight: 600;">Don't just learn to drive<br>Learn to lead the way.</p>
+</div>
+{% endblock %}

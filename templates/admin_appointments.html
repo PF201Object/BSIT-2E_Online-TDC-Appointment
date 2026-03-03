@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+{% block title %}All Appointments - EcoDrive Theory{% endblock %}
+
+{% block content %}
+<div class="glass-panel">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
+        <h1 style="color: #043b50;">All Appointments</h1>
+        <a href="{{ url_for('admin_dashboard') }}" class="btn-secondary">
+            <i class="fas fa-arrow-left"></i> Back to Dashboard
+        </a>
+    </div>
+
+    <div style="overflow-x: auto;">
+        <table class="admin-table" style="width: 100%; border-collapse: collapse;">
+            <thead>
+                <tr style="background: #0f5e7a; color: white;">
+                    <th style="padding: 15px; text-align: left;">ID</th>
+                    <th style="padding: 15px; text-align: left;">Reference</th>
+                    <th style="padding: 15px; text-align: left;">Student</th>
+                    <th style="padding: 15px; text-align: left;">Contact</th>
+                    <th style="padding: 15px; text-align: left;">Date/Time</th>
+                    <th style="padding: 15px; text-align: left;">Status</th>
+                    <th style="padding: 15px; text-align: left;">Payment</th>
+                    <th style="padding: 15px; text-align: left;">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for apt in appointments %}
+                <tr style="border-bottom: 1px solid #cce7f0;">
+                    <td style="padding: 15px;">{{ apt.id }}</td>
+                    <td style="padding: 15px; font-weight: 600;">{{ apt.reference_number or 'N/A' }}</td>
+                    <td style="padding: 15px;">
+                        {{ apt.full_name or 'N/A' }}<br>
+                        <small style="color: #0f5e7a;">{{ apt.email or 'N/A' }}</small>
+                    </td>
+                    <td style="padding: 15px;">{{ apt.contact_number or 'N/A' }}</td>
+                    <td style="padding: 15px;">
+                        {{ apt.booking_date.strftime('%Y-%m-%d') if apt.booking_date else 'N/A' }}<br>
+                        <small>
+                            {% if apt.schedule and apt.schedule.start_time %}
+                                {{ apt.schedule.start_time }}
+                            {% else %}
+                                8:00 AM
+                            {% endif %}
+                        </small>
+                    </td>
+                    <td style="padding: 15px;">
+                        <span style="background: {% if apt.status == 'Confirmed' %}#28a745{% elif apt.status == 'Pending' %}#ffc107{% else %}#6c757d{% endif %};
+                                   color: {% if apt.status == 'Pending' %}#043b50{% else %}white{% endif %};
+                                   padding: 5px 15px; border-radius: 30px; font-weight: 500;">
+                            {{ apt.status or 'N/A' }}
+                        </span>
+                    </td>
+                    <td style="padding: 15px;">
+                        {% if apt.payment %}
+                            <span style="background: {% if apt.payment.status == 'Paid' %}#28a745{% else %}#ffc107{% endif %};
+                                       color: {% if apt.payment.status == 'Paid' %}white{% else %}#043b50{% endif %};
+                                       padding: 5px 12px; border-radius: 30px;">
+                                {{ apt.payment.status or 'N/A' }}
+                            </span>
+                        {% else %}
+                            <span style="background: #6c757d; color: white; padding: 5px 12px; border-radius: 30px;">
+                                No Payment
+                            </span>
+                        {% endif %}
+                    </td>
+                    <td style="padding: 15px;">
+                        <a href="{{ url_for('admin_appointment_detail', appt_id=apt.id) }}" class="btn-secondary" style="padding: 5px 15px;">
+                            <i class="fas fa-eye"></i> View
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% block title %}My Dashboard - EcoDrive Theory{% endblock %}
+
+{% block content %}
+<div class="glass-panel">
+    <h1 style="color: #043b50;">Welcome, {{ user.full_name or user.username }}!</h1>
+
+    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin: 40px 0;">
+        <div class="benefit-card" style="text-align: center;">
+            <i class="fas fa-calendar-check" style="font-size: 2.5rem; color: #0f5e7a;"></i>
+            <h3>Total Appointments</h3>
+            <p style="font-size: 2rem; font-weight: 700;">{{ appointments|length }}</p>
+        </div>
+        <div class="benefit-card" style="text-align: center;">
+            <i class="fas fa-clock" style="font-size: 2.5rem; color: #ffc107;"></i>
+            <h3>Pending</h3>
+            <p style="font-size: 2rem; font-weight: 700;">{{ appointments|selectattr('status', 'equalto', 'Pending')|list|length }}</p>
+        </div>
+        <div class="benefit-card" style="text-align: center;">
+            <i class="fas fa-check-circle" style="font-size: 2.5rem; color: #28a745;"></i>
+            <h3>Confirmed</h3>
+            <p style="font-size: 2rem; font-weight: 700;">{{ appointments|selectattr('status', 'equalto', 'Confirmed')|list|length }}</p>
+        </div>
+    </div>
+
+    <div style="display: flex; justify-content: space-between; align-items: center; margin: 30px 0;">
+        <h2 style="color: #043b50;">My Appointments</h2>
+        <a href="{{ url_for('booking') }}" class="btn-primary">+ NEW APPOINTMENT</a>
+    </div>
+
+    {% if appointments %}
+        <div style="overflow-x: auto;">
+            <table style="width: 100%; border-collapse: collapse;">
+                <thead>
+                    <tr style="background: #e3f7fb;">
+                        <th style="padding: 15px; text-align: left;">Reference</th>
+                        <th style="padding: 15px; text-align: left;">Date</th>
+                        <th style="padding: 15px; text-align: left;">Status</th>
+                        <th style="padding: 15px; text-align: left;">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for apt in appointments %}
+                    <tr style="border-bottom: 1px solid #cce7f0;">
+                        <td style="padding: 15px;">{{ apt.reference_number }}</td>
+                        <td style="padding: 15px;">{{ apt.booking_date.strftime('%Y-%m-%d') if apt.booking_date else 'N/A' }}</td>
+                        <td style="padding: 15px;">
+                            <span style="background: {% if apt.status == 'Confirmed' %}#28a745{% elif apt.status == 'Pending' %}#ffc107{% else %}#6c757d{% endif %}; color: white; padding: 5px 15px; border-radius: 30px;">
+                                {{ apt.status }}
+                            </span>
+                        </td>
+                        <td style="padding: 15px;">
+                            <a href="#" class="btn-secondary" style="padding: 8px 20px;">View</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <div style="text-align: center; padding: 50px; background: #f5fcff; border-radius: 40px;">
+            <i class="fas fa-calendar-times" style="font-size: 4rem; color: #cce7f0;"></i>
+            <p style="margin: 20px 0; color: #0f5e7a;">No appointments yet. Book your first TDC session today!</p>
+            <a href="{{ url_for('booking') }}" class="btn-primary">BOOK NOW</a>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

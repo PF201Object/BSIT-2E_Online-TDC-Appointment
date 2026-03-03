@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block title %}Manage Schedules - EcoDrive Theory{% endblock %}
+
+{% block content %}
+<div class="glass-panel">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
+        <h1 style="color: #043b50;">Manage Schedules</h1>
+        <button class="btn-primary" onclick="alert('Add new schedule form would open here')">+ Add Schedule</button>
+    </div>
+
+    <div style="overflow-x: auto;">
+        <table style="width: 100%; border-collapse: collapse;">
+            <thead>
+                <tr style="background: #e3f7fb;">
+                    <th style="padding: 15px;">ID</th>
+                    <th style="padding: 15px;">Course</th>
+                    <th style="padding: 15px;">Date</th>
+                    <th style="padding: 15px;">Time</th>
+                    <th style="padding: 15px;">Slots</th>
+                    <th style="padding: 15px;">Location</th>
+                    <th style="padding: 15px;">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for schedule in schedules %}
+                <tr style="border-bottom: 1px solid #cce7f0;">
+                    <td style="padding: 15px;">{{ schedule.id }}</td>
+                    <td style="padding: 15px;">{{ schedule.course.name if schedule.course else 'TDC' }}</td>
+                    <td style="padding: 15px;">{{ schedule.session_date }}</td>
+                    <td style="padding: 15px;">{{ schedule.start_time }} - {{ schedule.end_time }}</td>
+                    <td style="padding: 15px;">{{ schedule.available_slots }}/{{ schedule.total_slots }}</td>
+                    <td style="padding: 15px;">{{ schedule.location }}</td>
+                    <td style="padding: 15px;">
+                        <button class="btn-secondary" style="padding: 5px 15px; margin-right: 5px;">Edit</button>
+                        <button class="btn-login" style="padding: 5px 15px;">Delete</button>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

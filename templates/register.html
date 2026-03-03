@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block title %}Register - EcoDrive Theory{% endblock %}
+
+{% block content %}
+<div class="glass-panel" style="max-width: 700px; margin: 20px auto;">
+    <div class="form-container">
+        <h2 class="form-title">Create Account</h2>
+        <p style="text-align: center; color: #0f5e7a; margin-bottom: 25px;">Unlock your freedom! Your journey starts with the right tools.</p>
+
+        <form method="POST" action="{{ url_for('register') }}">
+            <div class="form-group">
+                <input type="text" name="username" class="form-control" placeholder="Username" required>
+            </div>
+            <div class="form-group">
+                <input type="text" name="full_name" class="form-control" placeholder="Full Name" required>
+            </div>
+            <div class="form-group">
+                <input type="email" name="email" class="form-control" placeholder="Email Address" required>
+            </div>
+            <div class="form-group">
+                <input type="tel" name="phone" class="form-control" placeholder="Contact Number">
+            </div>
+            <div class="form-group">
+                <input type="password" name="password" class="form-control" placeholder="Password" required>
+            </div>
+            <div class="form-group">
+                <input type="password" name="confirm_password" class="form-control" placeholder="Confirm Password" required>
+            </div>
+
+            <!-- Password strength meter -->
+            <div style="height: 8px; background: #e0f0f5; border-radius: 10px; margin: 10px 0;">
+                <div class="password-strength" style="height: 100%; border-radius: 10px; width: 0%;"></div>
+            </div>
+
+            <button type="submit" class="btn-primary">REGISTER</button>
+        </form>
+
+        <div style="text-align: center; margin-top: 25px;">
+            <p class="register-text">Already have an account? <a href="{{ url_for('login') }}" style="color: #0f5e7a; font-weight: 600; text-decoration: underline;">LOGIN</a></p>
+        </div>
+    </div>
+</div>
+
+<!-- Driving School Message -->
+<div class="glass-panel" style="margin-top: 20px; text-align: center;">
+    <h2 style="color: #043b50;">DRIVING SCHOOL</h2>
+    <p style="font-size: 1.2rem; color: #0f5e7a; font-weight: 600;">Learn to lead the way.</p>
+    <p style="font-style: italic; margin-top: 10px;">Don't just learn to drive, learn to lead the way.</p>
+</div>
+{% endblock %}

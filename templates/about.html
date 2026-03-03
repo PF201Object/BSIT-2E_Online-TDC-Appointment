@@ -1,0 +1,167 @@
+{% extends "base.html" %}
+{% block title %}About Us - The Future of Mobility{% endblock %}
+
+{% block content %}
+<style>
+    /* Embedded styles - these will work even if external CSS fails */
+    .about-container {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        border-radius: 50px;
+        padding: 40px;
+        box-shadow: 0 25px 50px -10px rgba(0, 255, 255, 0.3);
+        border: 1px solid rgba(255,255,255,0.5);
+        margin: 20px 0 40px;
+        font-family: 'Inter', sans-serif;
+    }
+    .about-title {
+        font-size: 2.5rem;
+        color: #043b50;
+        margin-bottom: 20px;
+        font-weight: 700;
+    }
+    .about-subtitle {
+        font-size: 1.8rem;
+        color: #0f5e7a;
+        margin: 15px 0;
+    }
+    .learn-more-btn {
+        background: #0f5e7a;
+        color: white;
+        border: none;
+        padding: 16px 50px;
+        border-radius: 60px;
+        font-weight: 700;
+        font-size: 1.2rem;
+        cursor: pointer;
+        display: inline-block;
+        text-decoration: none;
+        border: 1px solid #4ae0d0;
+        margin: 20px 0;
+        transition: 0.3s;
+    }
+    .learn-more-btn:hover {
+        background: #1483a8;
+        transform: translateY(-3px);
+    }
+    .benefit-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 25px;
+        margin: 40px 0;
+    }
+    .benefit-card {
+        background: white;
+        border-radius: 25px;
+        padding: 25px;
+        box-shadow: 0 8px 20px rgba(0,0,0,0.05);
+        border: 1px solid #b3f0f0;
+    }
+    .benefit-card h3 {
+        color: #043b50;
+        font-size: 1.3rem;
+        margin-bottom: 10px;
+    }
+    .benefit-card p {
+        color: #2b5f7a;
+    }
+    .teacher-section {
+        background: #e3f7fb;
+        border-radius: 60px;
+        padding: 25px 35px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin: 30px 0;
+    }
+    .search-box {
+        background: white;
+        border-radius: 60px;
+        padding: 15px 25px;
+        border: 2px solid #4ae0d0;
+        width: 300px;
+        font-size: 1rem;
+    }
+    .weather-info {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        margin-top: 20px;
+    }
+    .weather-temp {
+        font-size: 2rem;
+        color: #043b50;
+        font-weight: 700;
+    }
+    .weather-desc {
+        color: #0f5e7a;
+        font-size: 1.2rem;
+    }
+    .book-btn {
+        background: #0f5e7a;
+        color: white;
+        padding: 16px 40px;
+        border-radius: 60px;
+        text-decoration: none;
+        font-weight: 600;
+        display: inline-block;
+        border: 1px solid #4ae0d0;
+    }
+</style>
+
+<div class="about-container">
+    <!-- Main headline exactly as in your image -->
+    <h1 class="about-title"># LEARN MORE</h1>
+
+    <!-- Benefit cards exactly as shown -->
+    <div class="benefit-grid">
+        <div class="benefit-card">
+            <h3>Trust & Compliance</h3>
+            <p>LTO-aligned curriculum, valid certificates honored at all LTO centers.</p>
+        </div>
+        <div class="benefit-card">
+            <h3>24/7 Booking</h3>
+            <p>Book anytime, anywhere. No more office hours restriction.</p>
+        </div>
+        <div class="benefit-card">
+            <h3>Updated Curriculum</h3>
+            <p>Latest 2026 traffic regulations and road signs included.</p>
+        </div>
+    </div>
+
+    <!-- Teacher pointing section with search -->
+    <div class="teacher-section">
+        <div style="display: flex; align-items: center; gap: 20px;">
+            <i class="fas fa-chalkboard-teacher" style="font-size: 2.5rem; color: #0f5e7a;"></i>
+            <span style="font-weight: 600; color: #043b50;">teacher pointing:</span>
+            <i class="fas fa-stop-circle" style="color: #dc3545;"></i>
+            <i class="fas fa-ban" style="color: #ffc107;"></i>
+            <i class="fas fa-arrow-right" style="color: #28a745;"></i>
+        </div>
+        <div>
+            <input type="text" class="search-box" placeholder="Type here to search">
+        </div>
+    </div>
+
+    <!-- Bottom row with BOOK APPOINTMENT and weather -->
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 30px;">
+        <a href="{{ url_for('booking') }}" class="book-btn">
+            <i class="fas fa-calendar-check" style="margin-right: 10px;"></i>
+            BOOK APPOINTMENT
+        </a>
+        <div class="weather-info">
+            <i class="fas fa-sun" style="font-size: 2.5rem; color: #ffc107;"></i>
+            <div>
+                <span class="weather-temp">27°C</span>
+                <span class="weather-desc">Mostly clear</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Horizontal rule to match image -->
+    <hr style="margin: 30px 0; border: 1px solid #cce7f0;">
+</div>
+
+<!-- Font Awesome for icons (if not already in base) -->
+<link rel="stylesheet" href="https://cdnjsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+{% endblock %}

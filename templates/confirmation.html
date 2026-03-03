@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block title %}Booking Confirmed - EcoDrive Theory{% endblock %}
+
+{% block content %}
+<div class="glass-panel" style="text-align: center; max-width: 800px; margin: 40px auto;">
+    <div class="success-checkmark">
+        <div class="check-icon">
+            <i class="fas fa-check"></i>
+        </div>
+    </div>
+
+    <h2 style="color: #043b50; font-size: 2.5rem; margin: 20px 0;">Successfully Booked!</h2>
+
+    <div style="background: #e3f7fb; border-radius: 60px; padding: 20px; margin: 30px 0;">
+        <p style="font-size: 1.3rem; color: #0f5e7a;">Booking Reference Number:</p>
+        <p style="font-size: 2rem; font-weight: 700; color: #043b50; letter-spacing: 2px;">{{ appointment.reference_number }}</p>
+    </div>
+
+    <p style="font-size: 1.2rem; color: #2b5f7a; margin: 20px 0;">You're officially on the path to becoming a licensed driver. We're excited to see you in class and help you master the road.</p>
+
+    <div style="display: flex; gap: 20px; justify-content: center; margin: 40px 0;">
+        <a href="{{ url_for('dashboard') }}" class="btn-secondary">GO TO DASHBOARD</a>
+        <a href="{{ url_for('index') }}" class="btn-primary">HOME</a>
+    </div>
+
+    <p style="color: #0f5e7a;">A confirmation email has been sent to {{ appointment.email }}</p>
+</div>
+{% endblock %}

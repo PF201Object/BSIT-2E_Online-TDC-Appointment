@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+{% block title %}Our Courses - EcoDrive Theory{% endblock %}
+
+{% block content %}
+<div class="glass-panel">
+    <h1 style="font-size: 2.5rem; color: #043b50; margin-bottom: 20px; text-align: center;">Driving Courses</h1>
+    <p style="text-align: center; color: #0f5e7a; font-size: 1.2rem; margin-bottom: 40px;">Choose the perfect course for your driving journey</p>
+
+    <div class="course-grid">
+        {% for course in courses %}
+        <div class="course-card">
+            <div class="course-icon">
+                {% if '2w' in course.vehicle_type %}
+                    <i class="fas fa-motorcycle"></i>
+                {% elif '3w' in course.vehicle_type %}
+                    <i class="fas fa-motorcycle"></i>
+                {% elif '4w' in course.vehicle_type %}
+                    <i class="fas fa-car"></i>
+                {% elif '6w' in course.vehicle_type %}
+                    <i class="fas fa-truck"></i>
+                {% else %}
+                    <i class="fas fa-car"></i>
+                {% endif %}
+            </div>
+            <h3 class="course-title">{{ course.name }}</h3>
+            <p style="color: #2b5f7a; margin: 10px 0;">{{ course.description }}</p>
+            <div class="course-price">₱{{ "%.2f"|format(course.price) }}</div>
+            <span class="course-badge">{{ course.hours }} hours</span>
+            <div style="margin-top: 20px;">
+                {% if session.user_id %}
+                    <a href="{{ url_for('booking') }}?course={{ course.id }}" class="btn-primary" style="padding: 12px 30px;">Enroll Now</a>
+                {% else %}
+                    <a href="{{ url_for('login') }}" class="btn-primary" style="padding: 12px 30px;">Login to Enroll</a>
+                {% endif %}
+            </div>
+        </div>
+        {% else %}
+        <div style="grid-column: 1/-1; text-align: center; padding: 50px;">
+            <i class="fas fa-book-open" style="font-size: 4rem; color: #cce7f0;"></i>
+            <p style="margin-top: 20px; color: #0f5e7a;">No courses available at the moment.</p>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Additional Info -->
+    <div style="margin-top: 50px; background: #e3f7fb; border-radius: 40px; padding: 30px; text-align: center;">
+        <h3 style="color: #043b50; margin-bottom: 15px;">Why Choose Our Courses?</h3>
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;">
+            <div>
+                <i class="fas fa-certificate" style="font-size: 2rem; color: #0f5e7a;"></i>
+                <p style="margin-top: 10px;">LTO Accredited</p>
+            </div>
+            <div>
+                <i class="fas fa-clock" style="font-size: 2rem; color: #0f5e7a;"></i>
+                <p style="margin-top: 10px;">Flexible Schedule</p>
+            </div>
+            <div>
+                <i class="fas fa-chalkboard-teacher" style="font-size: 2rem; color: #0f5e7a;"></i>
+                <p style="margin-top: 10px;">Expert Instructors</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

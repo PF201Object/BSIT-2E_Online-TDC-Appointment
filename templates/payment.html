@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+{% block title %}Payment - EcoDrive Theory{% endblock %}
+
+{% block content %}
+<div class="glass-panel">
+    <a href="{{ url_for('booking') }}" class="btn-secondary" style="margin-bottom: 20px;"><i class="fas fa-arrow-left"></i> Back</a>
+
+    <div style="display: flex; gap: 30px;">
+        <!-- Left: Progress Tracker -->
+        <div style="width: 250px; background: rgba(74, 224, 208, 0.1); border-radius: 40px; padding: 30px;">
+            <div style="margin-bottom: 25px;">
+                <div style="background: #0f5e7a; color: white; width: 30px; height: 30px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center;">✓</div>
+                <span style="margin-left: 10px; color: #043b50;">Appointment</span>
+            </div>
+            <div style="margin-bottom: 25px;">
+                <div style="background: #0f5e7a; color: white; width: 30px; height: 30px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center;">✓</div>
+                <span style="margin-left: 10px; color: #043b50;">Your Information</span>
+            </div>
+            <div style="margin-bottom: 25px;">
+                <div style="background: #0f5e7a; color: white; width: 30px; height: 30px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center;">3</div>
+                <span style="margin-left: 10px; color: #043b50; font-weight: 600;">Vehicle & Payment</span>
+            </div>
+        </div>
+
+        <!-- Right: Payment Form -->
+        <div style="flex: 1;">
+            <h2 style="color: #043b50;">Ronbell Abarquez</h2>
+            <div style="background: #e3f7fb; border-radius: 60px; padding: 15px 25px; display: inline-block; margin: 15px 0;">
+                <i class="far fa-calendar"></i> 28 Feb, 2026 · 8:00 - 11:00 AM
+            </div>
+
+            <form method="POST" action="{{ url_for('payment', appt_id=appointment.id) }}">
+                <!-- Vehicle Type -->
+                <h3 style="color: #043b50; margin: 25px 0 15px;">Choose Vehicle Type*</h3>
+                <div class="vehicle-options">
+                    <div class="vehicle-card" data-vehicle="2w">
+                        <div class="vehicle-icon"><i class="fas fa-motorcycle"></i></div>
+                        <h4>Two-Wheels (2w)</h4>
+                        <div class="vehicle-price">₱1,200.00</div>
+                    </div>
+                    <div class="vehicle-card" data-vehicle="3w">
+                        <div class="vehicle-icon"><i class="fas fa-motorcycle"></i></div>
+                        <h4>Three-Wheels (3w)</h4>
+                        <div class="vehicle-price">₱1,350.00</div>
+                    </div>
+                    <div class="vehicle-card" data-vehicle="4w">
+                        <div class="vehicle-icon"><i class="fas fa-car"></i></div>
+                        <h4>Four-Wheels (4w)</h4>
+                        <div class="vehicle-price">₱1,500.00</div>
+                    </div>
+                    <div class="vehicle-card" data-vehicle="6w">
+                        <div class="vehicle-icon"><i class="fas fa-truck"></i></div>
+                        <h4>Six-Wheels (6w)</h4>
+                        <div class="vehicle-price">₱2,000.00</div>
+                    </div>
+                </div>
+
+                <!-- Payment Method -->
+                <h3 style="color: #043b50; margin: 30px 0 15px;">Payment Method*</h3>
+                <div class="payment-methods">
+                    <div class="payment-option" data-method="Over-the-Counter">
+                        <i class="fas fa-store"></i> Over-the-Counter: 7-Eleven (ECPay)
+                    </div>
+                    <div class="payment-option" data-method="Credit Card">
+                        <i class="fas fa-credit-card"></i> Credit/Debit Card
+                    </div>
+                    <div class="payment-option" data-method="Online Banking">
+                        <i class="fas fa-university"></i> Online Banking (InstaPay)
+                    </div>
+                    <div class="payment-option" data-method="E-Wallet">
+                        <i class="fas fa-mobile-alt"></i> E-Wallets (GCash, Maya)
+                    </div>
+                </div>
+
+                <input type="hidden" name="vehicle_type" id="vehicle_type" value="">
+                <input type="hidden" name="payment_method" id="payment_method" value="">
+
+                <button type="submit" class="btn-primary" style="margin-top: 30px; width: auto; padding: 16px 50px;">COMPLETE TRANSACTION</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

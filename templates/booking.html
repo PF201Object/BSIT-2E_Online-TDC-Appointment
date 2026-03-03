@@ -1,0 +1,145 @@
+{% extends "booking_step.html" %}
+{% set step = 1 %}
+{% block step_content %}
+
+<form method="POST" action="{{ url_for('booking_information') }}">
+    <h2 style="color: #043b50; margin-bottom: 20px;">Select Appointment Date</h2>
+    <p style="color: #0f5e7a; margin-bottom: 30px;">Choose from available dates (tomorrow onwards)</p>
+
+    <!-- Calendar Grid -->
+    <div style="background: #f5fcff; border-radius: 30px; padding: 25px; margin-bottom: 30px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+            <h3 style="color: #043b50;">Available Dates</h3>
+            <div style="color: #0f5e7a;">
+                <i class="fas fa-info-circle"></i> Maximum 20 slots per day
+            </div>
+        </div>
+
+        <div class="schedule-grid" style="grid-template-columns: repeat(4, 1fr);">
+            {% for date in available_dates %}
+            <div class="schedule-card {% if date.slots == 0 %}disabled{% endif %}"
+                 onclick="selectDate('{{ date.date }}', '{{ date.full }}', this)"
+                 style="{% if date.slots == 0 %}opacity: 0.5; pointer-events: none; background: #f0f0f0;{% endif %}">
+                <div style="font-size: 1.5rem; font-weight: 700; color: #043b50;">{{ date.day_num }}</div>
+                <div style="font-size: 1rem; color: #0f5e7a;">{{ date.month }}</div>
+                <div style="font-weight: 600; margin: 10px 0;">{{ date.day }}</div>
+                <div class="schedule-slots" style="color: {% if date.slots < 5 %}#dc3545{% elif date.slots < 10 %}#ffc107{% else %}#28a745{% endif %};">
+                    {{ date.slots }} slots left
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Time Selection -->
+    <div style="background: #f5fcff; border-radius: 30px; padding: 25px; margin-bottom: 30px;">
+        <h3 style="color: #043b50; margin-bottom: 20px;">Select Time</h3>
+        <p style="color: #0f5e7a; margin-bottom: 15px;">Fixed schedule: 8:00 AM - 5:00 PM</p>
+
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px;">
+            <div class="payment-option" onclick="selectTime('8:00 - 9:00 AM', this)">
+                <i class="far fa-clock"></i> 8:00 - 9:00 AM
+            </div>
+            <div class="payment-option" onclick="selectTime('9:00 - 10:00 AM', this)">
+                <i class="far fa-clock"></i> 9:00 - 10:00 AM
+            </div>
+            <div class="payment-option" onclick="selectTime('10:00 - 11:00 AM', this)">
+                <i class="far fa-clock"></i> 10:00 - 11:00 AM
+            </div>
+            <div class="payment-option" onclick="selectTime('11:00 AM - 12:00 PM', this)">
+                <i class="far fa-clock"></i> 11:00 AM - 12:00 PM
+            </div>
+            <div class="payment-option" onclick="selectTime('1:00 - 2:00 PM', this)">
+                <i class="far fa-clock"></i> 1:00 - 2:00 PM
+            </div>
+            <div class="payment-option" onclick="selectTime('2:00 - 3:00 PM', this)">
+                <i class="far fa-clock"></i> 2:00 - 3:00 PM
+            </div>
+            <div class="payment-option" onclick="selectTime('3:00 - 4:00 PM', this)">
+                <i class="far fa-clock"></i> 3:00 - 4:00 PM
+            </div>
+            <div class="payment-option" onclick="selectTime('4:00 - 5:00 PM', this)">
+                <i class="far fa-clock"></i> 4:00 - 5:00 PM
+            </div>
+        </div>
+    </div>
+
+    <!-- Hidden inputs -->
+    <input type="hidden" name="preferred_date" id="selected_date" required>
+    <input type="hidden" name="preferred_time" id="selected_time" required>
+
+    <!-- Continue Button -->
+    <div style="display: flex; justify-content: flex-end; margin-top: 30px;">
+        <button type="submit" class="btn-primary" id="continueBtn" style="padding: 16px 60px;" disabled>
+            Continue to Information <i class="fas fa-arrow-right"></i>
+        </button>
+    </div>
+</form>
+
+<script>
+    let selectedDateCard = null;
+    let selectedTimeCard = null;
+
+    function selectDate(date, fullDate, element) {
+        if (selectedDateCard) {
+            selectedDateCard.classList.remove('selected');
+        }
+        element.classList.add('selected');
+        selectedDateCard = element;
+        document.getElementById('selected_date').value = date;
+
+        // Show preview in summary
+        const summaryBox = document.querySelector('.summary-preview');
+        if (summaryBox) {
+            summaryBox.innerHTML = `<i class="far fa-calendar"></i> ${fullDate}`;
+        }
+
+        checkContinueButton();
+    }
+
+    function selectTime(time, element) {
+        if (selectedTimeCard) {
+            selectedTimeCard.classList.remove('selected');
+        }
+        element.classList.add('selected');
+        selectedTimeCard = element;
+        document.getElementById('selected_time').value = time;
+        checkContinueButton();
+    }
+
+    function checkContinueButton() {
+        const btn = document.getElementById('continueBtn');
+        if (selectedDateCard && selectedTimeCard) {
+            btn.disabled = false;
+            btn.style.opacity = '1';
+        } else {
+            btn.disabled = true;
+            btn.style.opacity = '0.5';
+        }
+    }
+</script>
+
+<style>
+    .schedule-card {
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+    .schedule-card.selected {
+        border-color: #0f5e7a;
+        background: #e3f7fb;
+        transform: scale(1.02);
+    }
+    .schedule-card.disabled {
+        cursor: not-allowed;
+        background: #f8f9fa;
+    }
+    .payment-option {
+        cursor: pointer;
+        text-align: center;
+    }
+    .payment-option.selected {
+        border-color: #0f5e7a;
+        background: #e3f7fb;
+    }
+</style>
+{% endblock %}

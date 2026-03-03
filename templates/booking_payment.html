@@ -1,0 +1,63 @@
+{% extends "booking_step.html" %}
+{% set step = 4 %}
+{% block step_content %}
+<h2 style="color: #043b50; margin-bottom: 20px;">Payment Method</h2>
+
+<form method="POST" action="{{ url_for('booking_process') }}">
+    <div style="background: #f5fcff; border-radius: 30px; padding: 30px; margin-bottom: 30px;">
+        <h3 style="color: #043b50; margin-bottom: 20px;">Order Summary</h3>
+
+        <div style="display: flex; justify-content: space-between; padding: 15px 0; border-bottom: 1px solid #cce7f0;">
+            <span style="color: #0f5e7a;">Vehicle Type:</span>
+            <span style="font-weight: 600; color: #043b50;">{{ vehicle }}</span>
+        </div>
+
+        <div style="display: flex; justify-content: space-between; padding: 15px 0; border-bottom: 1px solid #cce7f0;">
+            <span style="color: #0f5e7a;">Date:</span>
+            <span style="font-weight: 600; color: #043b50;">{{ session.get('booking_date') }}</span>
+        </div>
+
+        <div style="display: flex; justify-content: space-between; padding: 15px 0; border-bottom: 1px solid #cce7f0;">
+            <span style="color: #0f5e7a;">Time:</span>
+            <span style="font-weight: 600; color: #043b50;">{{ session.get('booking_time') }}</span>
+        </div>
+
+        <div style="display: flex; justify-content: space-between; padding: 20px 0;">
+            <span style="font-size: 1.3rem; color: #043b50;">Total Amount:</span>
+            <span style="font-size: 1.8rem; font-weight: 700; color: #28a745;">₱{{ "%.2f"|format(amount) }}</span>
+        </div>
+
+        <div style="background: #fff3cd; border-radius: 20px; padding: 15px; margin-top: 20px;">
+            <i class="fas fa-info-circle" style="color: #856404;"></i>
+            <span style="color: #856404; margin-left: 10px;">
+                Your booking will be pending until admin approves the payment.
+            </span>
+        </div>
+    </div>
+
+    <div style="background: #f5fcff; border-radius: 30px; padding: 30px;">
+        <h3 style="color: #043b50; margin-bottom: 20px;">Select Payment Method</h3>
+
+        <select name="payment_method" class="form-control" required style="padding: 18px; border-radius: 60px;">
+            <option value="" disabled selected>-- Choose Payment Method --</option>
+            <option value="GCash">📱 GCash</option>
+            <option value="Maya">📱 Maya</option>
+            <option value="Credit Card">💳 Credit/Debit Card</option>
+            <option value="BDO Online Banking">🏦 BDO Online Banking</option>
+            <option value="BPI Online Banking">🏦 BPI Online Banking</option>
+            <option value="UnionBank">🏦 UnionBank</option>
+            <option value="7-Eleven">🏪 7-Eleven (ECPay)</option>
+            <option value="Cebuana Lhuillier">💰 Cebuana Lhuillier</option>
+        </select>
+    </div>
+
+    <div style="display: flex; justify-content: space-between; margin-top: 30px;">
+        <a href="{{ url_for('booking') }}" class="btn-secondary">
+            <i class="fas fa-arrow-left"></i> Back
+        </a>
+        <button type="submit" class="btn-primary">
+            Submit Booking <i class="fas fa-check"></i>
+        </button>
+    </div>
+</form>
+{% endblock %}

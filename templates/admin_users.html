@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% block title %}All Users - EcoDrive Theory{% endblock %}
+
+{% block content %}
+<div class="glass-panel">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
+        <h1 style="color: #043b50;">All Users</h1>
+        <a href="{{ url_for('admin_dashboard') }}" class="btn-secondary">
+            <i class="fas fa-arrow-left"></i> Back to Dashboard
+        </a>
+    </div>
+
+    <div style="overflow-x: auto;">
+        <table class="admin-table" style="width: 100%; border-collapse: collapse;">
+            <thead>
+                <tr style="background: #0f5e7a; color: white;">
+                    <th style="padding: 15px; text-align: left;">ID</th>
+                    <th style="padding: 15px; text-align: left;">Username</th>
+                    <th style="padding: 15px; text-align: left;">Full Name</th>
+                    <th style="padding: 15px; text-align: left;">Email</th>
+                    <th style="padding: 15px; text-align: left;">Phone</th>
+                    <th style="padding: 15px; text-align: left;">Joined</th>
+                    <th style="padding: 15px; text-align: left;">Status</th>
+                    <th style="padding: 15px; text-align: left;">Appointments</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for user in users %}
+                <tr style="border-bottom: 1px solid #cce7f0;">
+                    <td style="padding: 15px;">{{ user.id }}</td>
+                    <td style="padding: 15px; font-weight: 600;">{{ user.username or 'N/A' }}</td>
+                    <td style="padding: 15px;">{{ user.full_name or 'N/A' }}</td>
+                    <td style="padding: 15px;">{{ user.email or 'N/A' }}</td>
+                    <td style="padding: 15px;">{{ user.phone or 'N/A' }}</td>
+                    <td style="padding: 15px;">{{ user.created_at.strftime('%Y-%m-%d') if user.created_at else 'N/A' }}</td>
+                    <td style="padding: 15px;">
+                        {% if user.is_admin %}
+                        <span style="background: #0f5e7a; color: white; padding: 5px 12px; border-radius: 30px;">
+                            Admin
+                        </span>
+                        {% else %}
+                        <span style="background: #28a745; color: white; padding: 5px 12px; border-radius: 30px;">
+                            Student
+                        </span>
+                        {% endif %}
+                    </td>
+                    <td style="padding: 15px;">{{ user.appointments|length }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

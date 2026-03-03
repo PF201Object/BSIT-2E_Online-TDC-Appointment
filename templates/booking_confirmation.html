@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block title %}Booking Submitted - EcoDrive Theory{% endblock %}
+
+{% block content %}
+<div class="glass-panel" style="text-align: center; max-width: 700px; margin: 40px auto;">
+    <div class="success-checkmark">
+        <div class="check-icon" style="background: #ffc107;">
+            <i class="fas fa-clock"></i>
+        </div>
+    </div>
+
+    <h2 style="color: #043b50; font-size: 2.2rem; margin: 20px 0;">Booking Submitted!</h2>
+
+    <div style="background: #fff3cd; border-radius: 30px; padding: 25px; margin: 30px 0;">
+        <p style="font-size: 1.2rem; color: #856404;">Your booking is pending approval</p>
+        <p style="font-size: 1.5rem; font-weight: 700; color: #043b50; margin: 15px 0;">{{ appointment.reference_number }}</p>
+        <p style="color: #0f5e7a;">We'll notify you once admin confirms your payment</p>
+    </div>
+
+    <div style="display: flex; gap: 20px; justify-content: center; margin: 40px 0;">
+        <a href="{{ url_for('dashboard') }}" class="btn-primary">VIEW MY BOOKINGS</a>
+        <a href="{{ url_for('index') }}" class="btn-secondary">BACK TO HOME</a>
+    </div>
+
+    <p style="color: #0f5e7a;">
+        <i class="fas fa-envelope"></i>
+        Confirmation email sent to {{ appointment.email }}
+    </p>
+</div>
+{% endblock %}

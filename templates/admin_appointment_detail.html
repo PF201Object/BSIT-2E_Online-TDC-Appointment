@@ -1,0 +1,163 @@
+{% extends "base.html" %}
+{% block title %}Appointment Details - EcoDrive Theory{% endblock %}
+
+{% block content %}
+<div class="glass-panel">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
+        <h1 style="color: #043b50;">Appointment Details</h1>
+        <a href="{{ url_for('admin_dashboard') }}" class="btn-secondary">
+            <i class="fas fa-arrow-left"></i> Back to Dashboard
+        </a>
+    </div>
+
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px;">
+        <!-- Left Column - Appointment Info -->
+        <div style="background: #f5fcff; border-radius: 30px; padding: 30px;">
+            <h2 style="color: #043b50; margin-bottom: 20px;">Appointment Information</h2>
+
+            <div style="margin-bottom: 15px;">
+                <label style="color: #0f5e7a; font-weight: 600; display: block;">Reference Number:</label>
+                <p style="font-size: 1.2rem; font-weight: 700; color: #043b50;">{{ appointment.reference_number or 'N/A' }}</p>
+            </div>
+
+            <div style="margin-bottom: 15px;">
+                <label style="color: #0f5e7a; font-weight: 600; display: block;">Status:</label>
+                <span style="background: {% if appointment.status == 'Confirmed' %}#28a745{% elif appointment.status == 'Pending' %}#ffc107{% else %}#6c757d{% endif %};
+                           color: {% if appointment.status == 'Pending' %}#043b50{% else %}white{% endif %};
+                           padding: 8px 20px; border-radius: 30px; display: inline-block;">
+                    {{ appointment.status or 'N/A' }}
+                </span>
+            </div>
+
+            <div style="margin-bottom: 15px;">
+                <label style="color: #0f5e7a; font-weight: 600; display: block;">Booking Date:</label>
+                <p>{{ appointment.booking_date.strftime('%Y-%m-%d %H:%M') if appointment.booking_date else 'N/A' }}</p>
+            </div>
+
+            <div style="margin-bottom: 15px;">
+                <label style="color: #0f5e7a; font-weight: 600; display: block;">Preferred Date:</label>
+                <p>{{ appointment.schedule.session_date.strftime('%Y-%m-%d') if appointment.schedule and appointment.schedule.session_date else 'N/A' }}</p>
+            </div>
+
+            <div style="margin-bottom: 15px;">
+                <label style="color: #0f5e7a; font-weight: 600; display: block;">Preferred Time:</label>
+                <p>
+                    {% if appointment.schedule %}
+                        {{ appointment.schedule.start_time }} - {{ appointment.schedule.end_time }}
+                    {% else %}
+                        8:00 AM - 5:00 PM
+                    {% endif %}
+                </p>
+            </div>
+
+            <div style="margin-bottom: 15px;">
+                <label style="color: #0f5e7a; font-weight: 600; display: block;">Location:</label>
+                <p>{{ appointment.location or 'EcoDrive Main Center' }}</p>
+            </div>
+        </div>
+
+        <!-- Right Column - Student Info -->
+        <div style="background: #f5fcff; border-radius: 30px; padding: 30px;">
+            <h2 style="color: #043b50; margin-bottom: 20px;">Student Information</h2>
+
+            <div style="margin-bottom: 15px;">
+                <label style="color: #0f5e7a; font-weight: 600; display: block;">Full Name:</label>
+                <p style="font-size: 1.2rem; font-weight: 600;">{{ appointment.full_name or 'N/A' }}</p>
+            </div>
+
+            <div style="margin-bottom: 15px;">
+                <label style="color: #0f5e7a; font-weight: 600; display: block;">Email:</label>
+                <p>{{ appointment.email or 'N/A' }}</p>
+            </div>
+
+            <div style="margin-bottom: 15px;">
+                <label style="color: #0f5e7a; font-weight: 600; display: block;">Contact Number:</label>
+                <p>{{ appointment.contact_number or 'N/A' }}</p>
+            </div>
+
+            <div style="margin-bottom: 15px;">
+                <label style="color: #0f5e7a; font-weight: 600; display: block;">Username:</label>
+                <p>{{ appointment.user.username if appointment.user else 'N/A' }}</p>
+            </div>
+
+            <div style="margin-bottom: 15px;">
+                <label style="color: #0f5e7a; font-weight: 600; display: block;">Account Created:</label>
+                <p>{{ appointment.user.created_at.strftime('%Y-%m-%d') if appointment.user and appointment.user.created_at else 'N/A' }}</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Payment Information Section -->
+    <div style="background: #f5fcff; border-radius: 30px; padding: 30px; margin-top: 30px;">
+        <h2 style="color: #043b50; margin-bottom: 20px;">Payment Information</h2>
+
+        {% if appointment.payment %}
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;">
+            <div>
+                <label style="color: #0f5e7a; font-weight: 600; display: block;">Payment Status:</label>
+                <span style="background: {% if appointment.payment.status == 'Paid' %}#28a745{% else %}#ffc107{% endif %};
+                           color: {% if appointment.payment.status == 'Paid' %}white{% else %}#043b50{% endif %};
+                           padding: 5px 15px; border-radius: 30px; display: inline-block;">
+                    {{ appointment.payment.status or 'Pending' }}
+                </span>
+            </div>
+
+            <div>
+                <label style="color: #0f5e7a; font-weight: 600; display: block;">Amount:</label>
+                <p style="font-size: 1.3rem; font-weight: 700; color: #28a745;">₱{{ "%.2f"|format(appointment.payment.amount or 0) }}</p>
+            </div>
+
+            <div>
+                <label style="color: #0f5e7a; font-weight: 600; display: block;">Payment Method:</label>
+                <p>{{ appointment.payment.payment_method or 'N/A' }}</p>
+            </div>
+
+            <div>
+                <label style="color: #0f5e7a; font-weight: 600; display: block;">Transaction ID:</label>
+                <p>{{ appointment.payment.transaction_id or 'N/A' }}</p>
+            </div>
+
+            <div>
+                <label style="color: #0f5e7a; font-weight: 600; display: block;">Payment Reference:</label>
+                <p>{{ appointment.payment.reference_number or 'N/A' }}</p>
+            </div>
+
+            <div>
+                <label style="color: #0f5e7a; font-weight: 600; display: block;">Payment Date:</label>
+                <p>{{ appointment.payment.payment_date.strftime('%Y-%m-%d %H:%M') if appointment.payment.payment_date else 'N/A' }}</p>
+            </div>
+        </div>
+
+        {% if appointment.status == 'Pending' and appointment.payment.status == 'Pending' %}
+        <div style="margin-top: 20px;">
+            <form method="POST" action="{{ url_for('approve_payment', payment_id=appointment.payment.id) }}" style="display: inline;">
+                <button type="submit" class="btn-primary" style="background: #28a745; padding: 12px 30px;"
+                        onclick="return confirm('Approve this payment? This will confirm the appointment.')">
+                    <i class="fas fa-check"></i> Approve Payment
+                </button>
+            </form>
+        </div>
+        {% endif %}
+
+        {% else %}
+        <p style="color: #dc3545; text-align: center; padding: 20px;">No payment record found for this appointment.</p>
+        {% endif %}
+    </div>
+
+    <!-- Action Buttons -->
+    <div style="display: flex; gap: 20px; margin-top: 30px;">
+        {% if appointment.status == 'Pending' and appointment.payment and appointment.payment.status == 'Pending' %}
+        <form method="POST" action="{{ url_for('approve_payment', payment_id=appointment.payment.id) }}" style="display: inline;">
+            <button type="submit" class="btn-primary" style="background: #28a745;"
+                    onclick="return confirm('Approve this payment? This will confirm the appointment.')">
+                <i class="fas fa-check"></i> Approve Payment
+            </button>
+        </form>
+        {% endif %}
+
+        <a href="{{ url_for('admin_dashboard') }}" class="btn-secondary">
+            <i class="fas fa-arrow-left"></i> Back to Dashboard
+        </a>
+    </div>
+</div>
+{% endblock %}
