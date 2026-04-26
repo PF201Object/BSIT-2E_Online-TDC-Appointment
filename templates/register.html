@@ -2,49 +2,425 @@
 {% block title %}Register - EcoDrive Theory{% endblock %}
 
 {% block content %}
-<div class="glass-panel" style="max-width: 700px; margin: 20px auto;">
-    <div class="form-container">
-        <h2 class="form-title">Create Account</h2>
-        <p style="text-align: center; color: #0f5e7a; margin-bottom: 25px;">Unlock your freedom! Your journey starts with the right tools.</p>
+<div class="glass-panel" style="max-width: 550px; margin: 20px auto;">
+    <h2 class="form-title">Create Account</h2>
+    <p style="text-align: center; color: #0f5e7a; margin-bottom: 25px; font-size: clamp(0.9rem, 3vw, 1rem);">
+        Unlock your freedom! Your journey starts with the right tools.
+    </p>
 
-        <form method="POST" action="{{ url_for('register') }}">
-            <div class="form-group">
-                <input type="text" name="username" class="form-control" placeholder="Username" required>
-            </div>
-            <div class="form-group">
-                <input type="text" name="full_name" class="form-control" placeholder="Full Name" required>
-            </div>
-            <div class="form-group">
-                <input type="email" name="email" class="form-control" placeholder="Email Address" required>
-            </div>
-            <div class="form-group">
-                <input type="tel" name="phone" class="form-control" placeholder="Contact Number">
-            </div>
-            <div class="form-group">
-                <input type="password" name="password" class="form-control" placeholder="Password" required>
-            </div>
-            <div class="form-group">
-                <input type="password" name="confirm_password" class="form-control" placeholder="Confirm Password" required>
-            </div>
+    <!-- Flash messages for server-side errors -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category }}" style="padding: 12px; border-radius: 10px; margin-bottom: 15px;
+                    {% if category == 'danger' %}background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb;
+                    {% elif category == 'success' %}background: #d4edda; color: #155724; border: 1px solid #c3e6cb;
+                    {% else %}background: #fff3cd; color: #856404; border: 1px solid #ffeeba;{% endif %}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
 
-            <!-- Password strength meter -->
-            <div style="height: 8px; background: #e0f0f5; border-radius: 10px; margin: 10px 0;">
-                <div class="password-strength" style="height: 100%; border-radius: 10px; width: 0%;"></div>
-            </div>
-
-            <button type="submit" class="btn-primary">REGISTER</button>
-        </form>
-
-        <div style="text-align: center; margin-top: 25px;">
-            <p class="register-text">Already have an account? <a href="{{ url_for('login') }}" style="color: #0f5e7a; font-weight: 600; text-decoration: underline;">LOGIN</a></p>
+    <form method="POST" action="{{ url_for('register') }}" id="registerForm">
+        <!-- Username field -->
+        <div class="form-group">
+            <input type="text" name="username" id="username" class="form-control" placeholder="Username" required>
+            <small id="usernameError" style="color: #dc3545; font-size: 12px; display: none;"></small>
+            <small id="usernameValid" style="color: #28a745; font-size: 12px; display: none;">✓ Username available</small>
         </div>
+
+        <!-- Full Name field -->
+        <div class="form-group">
+            <input type="text" name="full_name" id="full_name" class="form-control" placeholder="Full Name" required>
+            <small id="fullNameError" style="color: #dc3545; font-size: 12px; display: none;">Please enter your full name</small>
+        </div>
+
+        <!-- Email field -->
+        <div class="form-group">
+            <input type="email" name="email" id="email" class="form-control" placeholder="Email Address" required>
+            <small id="emailError" style="color: #dc3545; font-size: 12px; display: none;"></small>
+            <small id="emailValid" style="color: #28a745; font-size: 12px; display: none;">✓ Valid email format</small>
+        </div>
+
+        <!-- Phone field -->
+        <div class="form-group">
+            <input type="tel" name="phone" id="phone" class="form-control" placeholder="Contact Number (optional)">
+            <small id="phoneError" style="color: #dc3545; font-size: 12px; display: none;">Please enter a valid phone number (11 digits)</small>
+        </div>
+
+        <!-- Password field -->
+        <div class="form-group" style="position: relative;">
+            <input type="password" name="password" id="password" class="form-control" placeholder="Password" required style="padding-right: 50px;">
+            <button type="button" id="togglePassword" style="position: absolute; right: 15px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; color: #0f5e7a;">
+                <i class="fas fa-eye"></i>
+            </button>
+        </div>
+
+        <!-- Password strength meter -->
+        <div style="height: 6px; background: #e0f0f5; border-radius: 10px; margin: 10px 0 5px 0; overflow: hidden;">
+            <div id="passwordStrength" style="height: 100%; border-radius: 10px; width: 0%; transition: width 0.3s ease;"></div>
+        </div>
+        <small id="strengthText" style="font-size: 11px; color: #666;"></small>
+
+        <!-- Confirm Password field -->
+        <div class="form-group" style="position: relative;">
+            <input type="password" name="confirm_password" id="confirm_password" class="form-control" placeholder="Confirm Password" required style="padding-right: 50px;">
+            <button type="button" id="toggleConfirmPassword" style="position: absolute; right: 15px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; color: #0f5e7a;">
+                <i class="fas fa-eye"></i>
+            </button>
+        </div>
+        <small id="passwordMatch" style="color: #dc3545; font-size: 12px; display: none;">✗ Passwords do not match</small>
+        <small id="passwordMatchValid" style="color: #28a745; font-size: 12px; display: none;">✓ Passwords match</small>
+
+        <!-- Submit button -->
+        <button type="submit" id="submitBtn" class="btn-primary" disabled style="opacity: 0.6;">REGISTER</button>
+    </form>
+
+    <div style="text-align: center; margin-top: 25px;">
+        <p style="font-size: clamp(0.85rem, 3vw, 1rem);">Already have an account?
+            <a href="{{ url_for('login') }}" style="color: #0f5e7a; font-weight: 600; text-decoration: underline;">LOGIN</a>
+        </p>
     </div>
 </div>
 
-<!-- Driving School Message -->
-<div class="glass-panel" style="margin-top: 20px; text-align: center;">
-    <h2 style="color: #043b50;">DRIVING SCHOOL</h2>
-    <p style="font-size: 1.2rem; color: #0f5e7a; font-weight: 600;">Learn to lead the way.</p>
-    <p style="font-style: italic; margin-top: 10px;">Don't just learn to drive, learn to lead the way.</p>
-</div>
+<style>
+    .form-group {
+        margin-bottom: 20px;
+    }
+    .form-control {
+        width: 100%;
+        padding: 12px 15px;
+        border: 2px solid #e0e0e0;
+        border-radius: 10px;
+        font-size: 14px;
+        transition: all 0.3s;
+    }
+    .form-control:focus {
+        outline: none;
+        border-color: #0f5e7a;
+        box-shadow: 0 0 0 3px rgba(15,94,122,0.1);
+    }
+    .form-control.error {
+        border-color: #dc3545;
+    }
+    .form-control.valid {
+        border-color: #28a745;
+    }
+    .btn-primary {
+        width: 100%;
+        padding: 12px;
+        background: linear-gradient(135deg, #0f5e7a, #1a4b63);
+        color: white;
+        border: none;
+        border-radius: 10px;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: transform 0.2s;
+    }
+    .btn-primary:hover:not(:disabled) {
+        transform: translateY(-2px);
+    }
+    .btn-primary:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+    }
+    .fas {
+        font-family: "Font Awesome 6 Free";
+    }
+</style>
+
+<script>
+    // DOM elements
+    const username = document.getElementById('username');
+    const email = document.getElementById('email');
+    const phone = document.getElementById('phone');
+    const password = document.getElementById('password');
+    const confirmPassword = document.getElementById('confirm_password');
+    const fullName = document.getElementById('full_name');
+    const submitBtn = document.getElementById('submitBtn');
+
+    // Validation state
+    let isUsernameValid = false;
+    let isEmailValid = false;
+    let isPhoneValid = true; // optional field
+    let isPasswordValid = false;
+    let doPasswordsMatch = false;
+    let isFullNameValid = false;
+
+    // Real-time duplicate check for username
+    username.addEventListener('blur', async function() {
+        const usernameValue = this.value.trim();
+        const usernameError = document.getElementById('usernameError');
+        const usernameValid = document.getElementById('usernameValid');
+
+        if (usernameValue.length < 3) {
+            usernameError.textContent = 'Username must be at least 3 characters';
+            usernameError.style.display = 'block';
+            usernameValid.style.display = 'none';
+            this.classList.add('error');
+            this.classList.remove('valid');
+            isUsernameValid = false;
+            validateForm();
+            return;
+        }
+
+        try {
+            const response = await fetch(`/check-username?username=${encodeURIComponent(usernameValue)}`);
+            const data = await response.json();
+
+            if (data.exists) {
+                usernameError.textContent = 'Username already taken. Please choose another.';
+                usernameError.style.display = 'block';
+                usernameValid.style.display = 'none';
+                this.classList.add('error');
+                this.classList.remove('valid');
+                isUsernameValid = false;
+            } else {
+                usernameError.style.display = 'none';
+                usernameValid.style.display = 'block';
+                this.classList.remove('error');
+                this.classList.add('valid');
+                isUsernameValid = true;
+            }
+        } catch (error) {
+            console.error('Error checking username:', error);
+            isUsernameValid = true; // Assume valid if check fails
+        }
+        validateForm();
+    });
+
+// Real-time duplicate check for email
+email.addEventListener('blur', async function() {
+    const emailValue = this.value.trim();
+    const emailError = document.getElementById('emailError');
+    const emailValid = document.getElementById('emailValid');
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(emailValue)) {
+        emailError.textContent = 'Please enter a valid email address';
+        emailError.style.display = 'block';
+        emailValid.style.display = 'none';
+        this.classList.add('error');
+        this.classList.remove('valid');
+        isEmailValid = false;
+        validateForm();
+        return;
+    }
+
+    try {
+        const response = await fetch(`/check-email?email=${encodeURIComponent(emailValue)}`);
+        const data = await response.json();
+
+        if (data.exists && data.verified) {
+            emailError.textContent = data.message || 'Email already registered. Please login.';
+            emailError.style.display = 'block';
+            emailValid.style.display = 'none';
+            this.classList.add('error');
+            this.classList.remove('valid');
+            isEmailValid = false;
+        } else if (data.exists && !data.verified) {
+            // Email exists but unverified - show warning but allow
+            emailError.textContent = data.message || 'Previous unverified account will be replaced.';
+            emailError.style.display = 'block';
+            emailError.style.color = '#856404';
+            emailValid.style.display = 'none';
+            this.classList.add('error');
+            this.classList.remove('valid');
+            isEmailValid = true;  // Still allow registration
+        } else {
+            emailError.style.display = 'none';
+            emailValid.style.display = 'block';
+            this.classList.remove('error');
+            this.classList.add('valid');
+            isEmailValid = true;
+        }
+    } catch (error) {
+        console.error('Error checking email:', error);
+        isEmailValid = true;
+    }
+    validateForm();
+});
+
+    // Phone validation (optional but if entered, must be valid)
+    phone.addEventListener('input', function() {
+        const phoneValue = this.value.trim();
+        const phoneError = document.getElementById('phoneError');
+
+        if (phoneValue === '') {
+            phoneError.style.display = 'none';
+            this.classList.remove('error', 'valid');
+            isPhoneValid = true;
+            validateForm();
+            return;
+        }
+
+        const phoneRegex = /^[0-9]{11}$/;
+        if (!phoneRegex.test(phoneValue)) {
+            phoneError.style.display = 'block';
+            this.classList.add('error');
+            this.classList.remove('valid');
+            isPhoneValid = false;
+        } else {
+            phoneError.style.display = 'none';
+            this.classList.remove('error');
+            this.classList.add('valid');
+            isPhoneValid = true;
+        }
+        validateForm();
+    });
+
+    // Full name validation
+    fullName.addEventListener('input', function() {
+        const nameValue = this.value.trim();
+        const nameError = document.getElementById('fullNameError');
+
+        if (nameValue.length < 2) {
+            nameError.style.display = 'block';
+            this.classList.add('error');
+            this.classList.remove('valid');
+            isFullNameValid = false;
+        } else {
+            nameError.style.display = 'none';
+            this.classList.remove('error');
+            this.classList.add('valid');
+            isFullNameValid = true;
+        }
+        validateForm();
+    });
+
+    // Password strength meter
+    password.addEventListener('input', function() {
+        const passwordValue = this.value;
+        const strengthBar = document.getElementById('passwordStrength');
+        const strengthText = document.getElementById('strengthText');
+        let strength = 0;
+
+        if (passwordValue.length >= 8) strength++;
+        if (passwordValue.match(/[a-z]/) && passwordValue.match(/[A-Z]/)) strength++;
+        if (passwordValue.match(/[0-9]/)) strength++;
+        if (passwordValue.match(/[^a-zA-Z0-9]/)) strength++;
+
+        let width = 0;
+        let color = '';
+        let message = '';
+
+        switch(strength) {
+            case 0:
+            case 1:
+                width = '25%';
+                color = '#dc3545';
+                message = 'Weak password';
+                isPasswordValid = false;
+                break;
+            case 2:
+                width = '50%';
+                color = '#ffc107';
+                message = 'Fair password';
+                isPasswordValid = false;
+                break;
+            case 3:
+                width = '75%';
+                color = '#17a2b8';
+                message = 'Good password';
+                isPasswordValid = true;
+                break;
+            case 4:
+                width = '100%';
+                color = '#28a745';
+                message = 'Strong password!';
+                isPasswordValid = true;
+                break;
+        }
+
+        if (passwordValue.length === 0) {
+            width = '0%';
+            message = '';
+            isPasswordValid = false;
+        }
+
+        strengthBar.style.width = width;
+        strengthBar.style.backgroundColor = color;
+        strengthText.textContent = message;
+        strengthText.style.color = color;
+
+        // Check password match when password changes
+        if (confirmPassword.value) {
+            checkPasswordMatch();
+        }
+        validateForm();
+    });
+
+    // Confirm password match
+    function checkPasswordMatch() {
+        const passwordValue = password.value;
+        const confirmValue = confirmPassword.value;
+        const matchError = document.getElementById('passwordMatch');
+        const matchValid = document.getElementById('passwordMatchValid');
+
+        if (confirmValue === '') {
+            matchError.style.display = 'none';
+            matchValid.style.display = 'none';
+            doPasswordsMatch = false;
+            return;
+        }
+
+        if (passwordValue === confirmValue) {
+            matchError.style.display = 'none';
+            matchValid.style.display = 'block';
+            doPasswordsMatch = true;
+        } else {
+            matchError.style.display = 'block';
+            matchValid.style.display = 'none';
+            doPasswordsMatch = false;
+        }
+    }
+
+    confirmPassword.addEventListener('input', checkPasswordMatch);
+
+    // Toggle password visibility
+    const togglePassword = document.getElementById('togglePassword');
+    const toggleConfirm = document.getElementById('toggleConfirmPassword');
+
+    togglePassword.addEventListener('click', function() {
+        const type = password.getAttribute('type') === 'password' ? 'text' : 'password';
+        password.setAttribute('type', type);
+        const icon = this.querySelector('i');
+        if (type === 'text') {
+            icon.classList.remove('fa-eye');
+            icon.classList.add('fa-eye-slash');
+        } else {
+            icon.classList.remove('fa-eye-slash');
+            icon.classList.add('fa-eye');
+        }
+    });
+
+    toggleConfirm.addEventListener('click', function() {
+        const type = confirmPassword.getAttribute('type') === 'password' ? 'text' : 'password';
+        confirmPassword.setAttribute('type', type);
+        const icon = this.querySelector('i');
+        if (type === 'text') {
+            icon.classList.remove('fa-eye');
+            icon.classList.add('fa-eye-slash');
+        } else {
+            icon.classList.remove('fa-eye-slash');
+            icon.classList.add('fa-eye');
+        }
+    });
+
+    // Validate entire form
+    function validateForm() {
+        if (isUsernameValid && isEmailValid && isPhoneValid && isPasswordValid && doPasswordsMatch && isFullNameValid) {
+            submitBtn.disabled = false;
+            submitBtn.style.opacity = '1';
+        } else {
+            submitBtn.disabled = true;
+            submitBtn.style.opacity = '0.6';
+        }
+    }
+
+    // Initial validation
+    fullName.dispatchEvent(new Event('input'));
+</script>
 {% endblock %}

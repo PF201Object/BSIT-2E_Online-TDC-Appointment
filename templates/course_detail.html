@@ -1,0 +1,291 @@
+{% extends "base.html" %}
+{% block title %}{{ course.name }} - EcoDrive Theory{% endblock %}
+
+{% block content %}
+<div class="glass-panel">
+    <!-- Hero Section -->
+    <div style="background: linear-gradient(135deg, #0f5e7a, #1a4b63); border-radius: 30px; padding: clamp(20px, 5vw, 50px); text-align: center; margin-bottom: 25px;">
+        <div class="course-icon-large" style="font-size: clamp(2.5rem, 10vw, 4rem); margin-bottom: 15px;">
+            {% if '2w' in course.vehicle_type %}
+                <i class="fas fa-motorcycle" style="color: #4ae0d0;"></i>
+            {% elif '3w' in course.vehicle_type %}
+                <i class="fas fa-motorcycle" style="color: #4ae0d0;"></i>
+            {% elif '4w' in course.vehicle_type %}
+                <i class="fas fa-car" style="color: #4ae0d0;"></i>
+            {% elif '6w' in course.vehicle_type %}
+                <i class="fas fa-truck" style="color: #4ae0d0;"></i>
+            {% else %}
+                <i class="fas fa-car" style="color: #4ae0d0;"></i>
+            {% endif %}
+        </div>
+        <h1 style="color: white; font-size: clamp(1.5rem, 6vw, 2rem); margin-bottom: 8px;">{{ course.name }}</h1>
+        <p style="color: rgba(255,255,255,0.9); font-size: clamp(0.85rem, 4vw, 1rem); max-width: 800px; margin: 0 auto;">{{ course.description }}</p>
+    </div>
+
+    <!-- Main Content - Mobile: single column, Desktop: two columns -->
+    <div style="display: flex; flex-direction: column; gap: 25px;">
+
+        <!-- Course Overview Card - Full width on mobile -->
+        <div style="background: white; border-radius: 25px; padding: clamp(18px, 4vw, 25px); border: 1px solid #b3f0f0;">
+            <h3 style="color: #043b50; margin-bottom: 15px; font-size: clamp(1rem, 4vw, 1.2rem);">
+                <i class="fas fa-info-circle" style="color: #0f5e7a;"></i> Course Overview
+            </h3>
+            <div style="display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #e0f0f5; flex-wrap: wrap; gap: 8px;">
+                <span style="color: #0f5e7a; font-size: clamp(0.8rem, 3vw, 0.9rem);">Course Duration</span>
+                <span style="font-weight: 700; color: #043b50; font-size: clamp(0.8rem, 3vw, 0.9rem);">{{ course.hours }} Hours</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #e0f0f5; flex-wrap: wrap; gap: 8px;">
+                <span style="color: #0f5e7a; font-size: clamp(0.8rem, 3vw, 0.9rem);">Vehicle Type</span>
+                <span style="font-weight: 700; color: #043b50; font-size: clamp(0.8rem, 3vw, 0.9rem);">
+                    {% if '2w' in course.vehicle_type %}Motorcycle (2 wheels)
+                    {% elif '3w' in course.vehicle_type %}Tricycle (3 wheels)
+                    {% elif '4w' in course.vehicle_type %}Car (4 wheels)
+                    {% elif '6w' in course.vehicle_type %}Truck/Bus (6+ wheels)
+                    {% endif %}
+                </span>
+            </div>
+            <div style="display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #e0f0f5; flex-wrap: wrap; gap: 8px;">
+                <span style="color: #0f5e7a; font-size: clamp(0.8rem, 3vw, 0.9rem);">Certificate Validity</span>
+                <span style="font-weight: 700; color: #043b50; font-size: clamp(0.8rem, 3vw, 0.9rem);">Lifetime (LTO)</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; padding: 12px 0; flex-wrap: wrap; gap: 8px;">
+                <span style="color: #0f5e7a; font-size: clamp(0.8rem, 3vw, 0.9rem);">Course Fee</span>
+                <span style="font-size: clamp(1.3rem, 5vw, 1.6rem); font-weight: 700; color: #28a745;">₱{{ "%.2f"|format(course.price) }}</span>
+            </div>
+        </div>
+
+        <!-- Two column layout for larger screens -->
+        <div style="display: grid; grid-template-columns: 1fr; gap: 25px;">
+
+            <!-- Left Column Content -->
+            <div>
+                <!-- What You'll Learn -->
+                <div style="background: white; border-radius: 25px; padding: clamp(18px, 4vw, 25px); border: 1px solid #b3f0f0; margin-bottom: 20px;">
+                    <h3 style="color: #043b50; margin-bottom: 15px; font-size: clamp(1rem, 4vw, 1.1rem);">
+                        <i class="fas fa-graduation-cap" style="color: #0f5e7a;"></i> Comprehensive Curriculum
+                    </h3>
+                    <ul style="list-style: none; padding: 0;">
+                        <li style="padding: 8px 0; display: flex; align-items: center; gap: 10px; border-bottom: 1px solid #f0f0f0;">
+                            <i class="fas fa-check-circle" style="color: #28a745; font-size: clamp(0.8rem, 3vw, 1rem);"></i>
+                            <span style="font-size: clamp(0.75rem, 3vw, 0.85rem);"><strong>Module 1:</strong> Traffic Rules</span>
+                        </li>
+                        <li style="padding: 8px 0; display: flex; align-items: center; gap: 10px; border-bottom: 1px solid #f0f0f0;">
+                            <i class="fas fa-check-circle" style="color: #28a745;"></i>
+                            <span style="font-size: clamp(0.75rem, 3vw, 0.85rem);"><strong>Module 2:</strong> Road Signs</span>
+                        </li>
+                        <li style="padding: 8px 0; display: flex; align-items: center; gap: 10px; border-bottom: 1px solid #f0f0f0;">
+                            <i class="fas fa-check-circle" style="color: #28a745;"></i>
+                            <span style="font-size: clamp(0.75rem, 3vw, 0.85rem);"><strong>Module 3:</strong> Defensive Driving</span>
+                        </li>
+                        <li style="padding: 8px 0; display: flex; align-items: center; gap: 10px; border-bottom: 1px solid #f0f0f0;">
+                            <i class="fas fa-check-circle" style="color: #28a745;"></i>
+                            <span style="font-size: clamp(0.75rem, 3vw, 0.85rem);"><strong>Module 4:</strong> Maintenance</span>
+                        </li>
+                        <li style="padding: 8px 0; display: flex; align-items: center; gap: 10px; border-bottom: 1px solid #f0f0f0;">
+                            <i class="fas fa-check-circle" style="color: #28a745;"></i>
+                            <span style="font-size: clamp(0.75rem, 3vw, 0.85rem);"><strong>Module 5:</strong> Emergency</span>
+                        </li>
+                        <li style="padding: 8px 0; display: flex; align-items: center; gap: 10px;">
+                            <i class="fas fa-check-circle" style="color: #28a745;"></i>
+                            <span style="font-size: clamp(0.75rem, 3vw, 0.85rem);"><strong>Module 6:</strong> Practical Test</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- What's Included -->
+                <div style="background: linear-gradient(135deg, #f0f9ff, #e8f4f8); border-radius: 25px; padding: clamp(18px, 4vw, 25px);">
+                    <h3 style="color: #043b50; margin-bottom: 15px; font-size: clamp(1rem, 4vw, 1.1rem);"><i class="fas fa-gift"></i> What's Included</h3>
+                    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px;">
+                        <div style="font-size: clamp(0.7rem, 3vw, 0.85rem);"><i class="fas fa-certificate" style="color: #0f5e7a;"></i> LTO Certificate</div>
+                        <div style="font-size: clamp(0.7rem, 3vw, 0.85rem);"><i class="fas fa-book" style="color: #0f5e7a;"></i> Digital Materials</div>
+                        <div style="font-size: clamp(0.7rem, 3vw, 0.85rem);"><i class="fas fa-quiz" style="color: #0f5e7a;"></i> Practice Exams</div>
+                        <div style="font-size: clamp(0.7rem, 3vw, 0.85rem);"><i class="fas fa-headset" style="color: #0f5e7a;"></i> Support 24/7</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column Content -->
+            <div>
+                <!-- Premium Features -->
+                <div style="background: linear-gradient(135deg, #0f5e7a, #1a4b63); border-radius: 25px; padding: 20px; color: white; margin-bottom: 20px;">
+                    <h3 style="margin-bottom: 15px; font-size: clamp(0.9rem, 4vw, 1rem);"><i class="fas fa-star"></i> Premium Features</h3>
+                    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px;">
+                        <div style="text-align: center;">
+                            <i class="fas fa-certificate" style="font-size: 1.5rem; color: #4ae0d0;"></i>
+                            <p style="margin-top: 5px; font-size: clamp(0.7rem, 3vw, 0.75rem);">LTO Certified</p>
+                        </div>
+                        <div style="text-align: center;">
+                            <i class="fas fa-chalkboard-teacher" style="font-size: 1.5rem; color: #4ae0d0;"></i>
+                            <p style="margin-top: 5px; font-size: clamp(0.7rem, 3vw, 0.75rem);">Expert Teachers</p>
+                        </div>
+                        <div style="text-align: center;">
+                            <i class="fas fa-clock" style="font-size: 1.5rem; color: #4ae0d0;"></i>
+                            <p style="margin-top: 5px; font-size: clamp(0.7rem, 3vw, 0.75rem);">Flexible Schedule</p>
+                        </div>
+                        <div style="text-align: center;">
+                            <i class="fas fa-file-alt" style="font-size: 1.5rem; color: #4ae0d0;"></i>
+                            <p style="margin-top: 5px; font-size: clamp(0.7rem, 3vw, 0.75rem);">Digital Certificate</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Enrollment Card -->
+                <div style="background: white; border-radius: 25px; padding: 20px; border: 2px solid #0f5e7a; text-align: center; margin-bottom: 20px;">
+                    <h3 style="color: #043b50; margin-bottom: 8px; font-size: clamp(1rem, 4vw, 1.2rem);">Ready to Start?</h3>
+                    <p style="color: #0f5e7a; margin-bottom: 15px; font-size: clamp(0.75rem, 3vw, 0.85rem);">Join thousands of successful drivers</p>
+                    <div style="font-size: clamp(1.5rem, 6vw, 1.8rem); font-weight: 700; color: #28a745; margin-bottom: 12px;">₱{{ "%.2f"|format(course.price) }}</div>
+
+                    {% if session.user_id %}
+                        <a href="{{ url_for('booking') }}" class="btn-enroll" style="display: inline-block; width: 100%; padding: 12px; background: linear-gradient(135deg, #28a745, #20c997); color: white; border-radius: 50px; text-decoration: none; font-weight: 600; transition: all 0.3s ease; border: none; cursor: pointer; font-size: clamp(0.85rem, 3vw, 1rem);">
+                            <i class="fas fa-arrow-right"></i> Enroll Now
+                        </a>
+                    {% else %}
+                        <a href="{{ url_for('login') }}" class="btn-login-glow" style="display: inline-block; width: 100%; padding: 12px; background: linear-gradient(135deg, #0f5e7a, #1a4b63); color: white; border-radius: 50px; text-decoration: none; font-weight: 600; transition: all 0.3s ease; border: 1px solid #4ae0d0; cursor: pointer; font-size: clamp(0.85rem, 3vw, 1rem);">
+                            <i class="fas fa-sign-in-alt"></i> Login to Enroll
+                        </a>
+                    {% endif %}
+
+                    <div style="margin-top: 12px;">
+                        <small style="color: #6c757d; font-size: clamp(0.6rem, 2.5vw, 0.7rem);"><i class="fas fa-lock"></i> Secure Payment • 30-Day Guarantee</small>
+                    </div>
+                </div>
+
+                <!-- Reviews Section - Compact for mobile -->
+                <div style="background: white; border-radius: 25px; padding: 20px; border: 1px solid #b3f0f0;">
+                    <h3 style="color: #043b50; margin-bottom: 12px; font-size: clamp(1rem, 4vw, 1.1rem);">
+                        <i class="fas fa-star" style="color: #ffc107;"></i> Reviews ({{ reviews|length }})
+                    </h3>
+
+                    <!-- Average Rating -->
+                    <div style="text-align: center; margin-bottom: 15px; padding: 12px; background: #f5fcff; border-radius: 15px;">
+                        <div style="font-size: clamp(1.5rem, 5vw, 1.8rem); font-weight: 700;">{{ "%.1f"|format(avg_rating) }}</div>
+                        <div>
+                            {% for i in range(5) %}
+                                {% if i < avg_rating|int %}
+                                    <i class="fas fa-star" style="color: #ffc107; font-size: clamp(0.7rem, 3vw, 0.8rem);"></i>
+                                {% elif i < avg_rating %}
+                                    <i class="fas fa-star-half-alt" style="color: #ffc107;"></i>
+                                {% else %}
+                                    <i class="far fa-star" style="color: #ffc107;"></i>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                        <small style="font-size: clamp(0.65rem, 2.5vw, 0.7rem);">Based on {{ reviews|length }} reviews</small>
+                    </div>
+
+                    <!-- Reviews List - Scrollable -->
+                    <div id="reviewsList" style="max-height: 300px; overflow-y: auto; margin-bottom: 15px;">
+                        {% if reviews %}
+                            {% for review in reviews[:5] %}
+                            <div style="border-bottom: 1px solid #e0f0f5; padding: 10px 0;">
+                                <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 5px; flex-wrap: wrap;">
+                                    <i class="fas fa-user-circle" style="font-size: 1.2rem; color: #0f5e7a;"></i>
+                                    <div>
+                                        <strong style="font-size: clamp(0.75rem, 3vw, 0.85rem);">{{ review.user.full_name.split()[0] if review.user and review.user.full_name else 'Student' }}</strong>
+                                        <div>
+                                            {% for i in range(5) %}
+                                                {% if i < review.rating %}
+                                                    <i class="fas fa-star" style="color: #ffc107; font-size: 0.7rem;"></i>
+                                                {% else %}
+                                                    <i class="far fa-star" style="color: #ffc107; font-size: 0.7rem;"></i>
+                                                {% endif %}
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                    <small style="margin-left: auto; color: #999; font-size: clamp(0.6rem, 2.5vw, 0.7rem);">{{ review.created_at.strftime('%b %d') if review.created_at else 'Just now' }}</small>
+                                </div>
+                                <p style="color: #555; margin-left: 35px; font-size: clamp(0.7rem, 2.5vw, 0.8rem);">{{ review.comment|truncate(80) }}</p>
+                            </div>
+                            {% endfor %}
+                        {% else %}
+                            <div style="text-align: center; padding: 20px; color: #999;">
+                                <i class="fas fa-comment-dots" style="font-size: 2rem;"></i>
+                                <p style="font-size: clamp(0.7rem, 3vw, 0.8rem);">No reviews yet</p>
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Write Review -->
+                    {% if session.user_id %}
+                        {% if has_reviewed %}
+                            <div style="background: #e8f5e9; border-radius: 15px; padding: 10px; text-align: center;">
+                                <i class="fas fa-check-circle" style="color: #28a745;"></i>
+                                <span style="font-size: clamp(0.7rem, 3vw, 0.8rem);">Thanks for reviewing!</span>
+                            </div>
+                        {% else %}
+                            <div style="border-top: 1px solid #e0f0f5; padding-top: 15px;">
+                                <h4 style="color: #043b50; margin-bottom: 8px; font-size: clamp(0.85rem, 3vw, 0.9rem);">Write a Review</h4>
+                                <form method="POST" action="{{ url_for('add_review', course_id=course.id) }}">
+                                    <div class="star-rating" style="margin-bottom: 10px;">
+                                        <input type="radio" name="rating" value="5" id="star5" required><label for="star5"><i class="fas fa-star"></i></label>
+                                        <input type="radio" name="rating" value="4" id="star4"><label for="star4"><i class="fas fa-star"></i></label>
+                                        <input type="radio" name="rating" value="3" id="star3"><label for="star3"><i class="fas fa-star"></i></label>
+                                        <input type="radio" name="rating" value="2" id="star2"><label for="star2"><i class="fas fa-star"></i></label>
+                                        <input type="radio" name="rating" value="1" id="star1"><label for="star1"><i class="fas fa-star"></i></label>
+                                    </div>
+                                    <textarea name="comment" class="form-control" rows="2" required placeholder="Share your experience..." style="width:100%; padding:10px; border-radius:20px; border:2px solid #e0f0f5; margin-bottom:10px; font-size:14px;"></textarea>
+                                    <button type="submit" class="btn-primary" style="width:100%; padding:10px; background: linear-gradient(135deg, #0f5e7a, #1a4b63); border-radius:50px; border:none; color:white; font-weight:600;">
+                                        Submit Review
+                                    </button>
+                                </form>
+                            </div>
+                        {% endif %}
+                    {% else %}
+                        <div style="text-align: center; padding: 12px; background: linear-gradient(135deg, #f0f9ff, #e8f4f8); border-radius: 15px;">
+                            <p style="margin-bottom: 8px; font-size: clamp(0.7rem, 3vw, 0.8rem);"><a href="{{ url_for('login') }}" style="color:#0f5e7a;">Login</a> to write a review</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Back Button -->
+    <div style="margin-top: 25px; text-align: center;">
+        <a href="{{ url_for('courses') }}" class="btn-secondary" style="padding: 10px 25px; border-radius: 50px; text-decoration: none; display: inline-block;">
+            <i class="fas fa-arrow-left"></i> Browse All Courses
+        </a>
+    </div>
+</div>
+
+<style>
+    /* Star Rating Styles */
+    .star-rating {
+        display: flex;
+        flex-direction: row-reverse;
+        justify-content: flex-end;
+        gap: 5px;
+    }
+    .star-rating input { display: none; }
+    .star-rating label {
+        cursor: pointer;
+        font-size: 1.5rem;
+        color: #ddd;
+        transition: color 0.2s;
+    }
+    .star-rating label:hover,
+    .star-rating label:hover ~ label,
+    .star-rating input:checked ~ label {
+        color: #ffc107;
+    }
+
+    /* Button Hover Effects */
+    .btn-enroll:hover, .btn-login-glow:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    }
+
+    /* Mobile specific */
+    @media (max-width: 768px) {
+        .glass-panel {
+            padding: 12px !important;
+        }
+        .star-rating label {
+            font-size: 1.2rem;
+        }
+        .btn-enroll, .btn-login-glow {
+            padding: 10px !important;
+        }
+    }
+</style>
+{% endblock %}

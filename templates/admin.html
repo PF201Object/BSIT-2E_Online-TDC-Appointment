@@ -3,317 +3,448 @@
 
 {% block content %}
 <div class="glass-panel">
-    <h1 style="color: #043b50;">Admin Dashboard</h1>
+    <h1 style="color: #043b50; font-size: clamp(1.5rem, 5vw, 2rem);">Admin Dashboard</h1>
+    <p style="color: #0f5e7a; margin-bottom: 30px;">Welcome back! Here's your business overview.</p>
 
     <!-- Statistics Cards -->
-    <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; margin: 40px 0;">
-        <div class="benefit-card" style="text-align: center;">
-            <i class="fas fa-users" style="font-size: 2.5rem; color: #0f5e7a;"></i>
-            <h3>Total Users</h3>
-            <p style="font-size: 2rem; font-weight: 700;">{{ users_count }}</p>
+    <div class="stats-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin: 30px 0;">
+        <div class="stat-card" style="background: white; border-radius: 25px; padding: 20px; text-align: center; border: 1px solid #b3f0f0;">
+            <i class="fas fa-users" style="font-size: 2rem; color: #0f5e7a;"></i>
+            <h3 style="margin: 10px 0; font-size: clamp(0.9rem, 3vw, 1rem);">Total Users</h3>
+            <p style="font-size: clamp(1.5rem, 5vw, 2rem); font-weight: 700; color: #043b50;">{{ users_count }}</p>
         </div>
-        <div class="benefit-card" style="text-align: center;">
-            <i class="fas fa-calendar-check" style="font-size: 2.5rem; color: #0f5e7a;"></i>
-            <h3>Appointments</h3>
-            <p style="font-size: 2rem; font-weight: 700;">{{ appointments_count }}</p>
+        <div class="stat-card" style="background: white; border-radius: 25px; padding: 20px; text-align: center; border: 1px solid #b3f0f0;">
+            <i class="fas fa-calendar-check" style="font-size: 2rem; color: #0f5e7a;"></i>
+            <h3 style="margin: 10px 0; font-size: clamp(0.9rem, 3vw, 1rem);">Total Bookings</h3>
+            <p style="font-size: clamp(1.5rem, 5vw, 2rem); font-weight: 700; color: #043b50;">{{ appointments_count }}</p>
         </div>
-        <div class="benefit-card" style="text-align: center;">
-            <i class="fas fa-clock" style="font-size: 2.5rem; color: #ffc107;"></i>
-            <h3>Pending</h3>
-            <p style="font-size: 2rem; font-weight: 700;">{{ pending_count }}</p>
+        <div class="stat-card" style="background: white; border-radius: 25px; padding: 20px; text-align: center; border: 1px solid #b3f0f0;">
+            <i class="fas fa-check-circle" style="font-size: 2rem; color: #28a745;"></i>
+            <h3 style="margin: 10px 0; font-size: clamp(0.9rem, 3vw, 1rem);">Booked</h3>
+            <p style="font-size: clamp(1.5rem, 5vw, 2rem); font-weight: 700; color: #28a745;">{{ booked_count }}</p>
         </div>
-        <div class="benefit-card" style="text-align: center;">
-            <i class="fas fa-check-circle" style="font-size: 2.5rem; color: #28a745;"></i>
-            <h3>Confirmed</h3>
-            <p style="font-size: 2rem; font-weight: 700;">{{ confirmed_count }}</p>
+        <div class="stat-card" style="background: white; border-radius: 25px; padding: 20px; text-align: center; border: 1px solid #b3f0f0;">
+            <i class="fas fa-calendar-day" style="font-size: 2rem; color: #ffc107;"></i>
+            <h3 style="margin: 10px 0; font-size: clamp(0.9rem, 3vw, 1rem);">Today's Bookings</h3>
+            <p style="font-size: clamp(1.5rem, 5vw, 2rem); font-weight: 700; color: #ffc107;">{{ today_booked }}</p>
+        </div>
+    </div>
+
+    <!-- Revenue Cards -->
+    <div class="revenue-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin: 30px 0;">
+        <div class="stat-card" style="background: linear-gradient(135deg, #0f5e7a, #1a4b63); color: white; border-radius: 25px; padding: 20px;">
+            <i class="fas fa-money-bill-wave" style="font-size: 1.8rem;"></i>
+            <h3 style="margin: 10px 0; font-size: clamp(0.9rem, 3vw, 1rem);">Total Revenue</h3>
+            <p style="font-size: clamp(1.3rem, 5vw, 1.8rem); font-weight: 700;">₱{{ "%.2f"|format(total_revenue) }}</p>
+        </div>
+        <div class="stat-card" style="background: linear-gradient(135deg, #28a745, #20c997); color: white; border-radius: 25px; padding: 20px;">
+            <i class="fas fa-chart-line" style="font-size: 1.8rem;"></i>
+            <h3 style="margin: 10px 0; font-size: clamp(0.9rem, 3vw, 1rem);">Today's Revenue</h3>
+            <p style="font-size: clamp(1.3rem, 5vw, 1.8rem); font-weight: 700;">₱{{ "%.2f"|format(today_revenue) }}</p>
+        </div>
+        <div class="stat-card" style="background: linear-gradient(135deg, #ffc107, #fd7e14); color: #043b50; border-radius: 25px; padding: 20px;">
+            <i class="fas fa-calendar-month" style="font-size: 1.8rem;"></i>
+            <h3 style="margin: 10px 0; font-size: clamp(0.9rem, 3vw, 1rem);">This Month</h3>
+            <p style="font-size: clamp(1.3rem, 5vw, 1.8rem); font-weight: 700;">₱{{ "%.2f"|format(monthly_revenue) }}</p>
+        </div>
+    </div>
+
+    <!-- Charts Section -->
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 25px; margin: 30px 0;">
+        <!-- Revenue Chart - Line/Bar with Dates -->
+        <div style="background: white; border-radius: 25px; padding: 20px; border: 1px solid #b3f0f0;">
+            <h3 style="color: #043b50; margin-bottom: 20px;">
+                <i class="fas fa-chart-line"></i> Last 7 Days Revenue
+            </h3>
+            <canvas id="revenueChart" style="width: 100%; height: 280px;"></canvas>
+            <div style="text-align: center; margin-top: 10px; font-size: 12px; color: #666;">
+                <span style="display: inline-block; width: 12px; height: 12px; background: #0f5e7a; border-radius: 2px; margin-right: 5px;"></span> Revenue (₱)
+            </div>
+        </div>
+
+        <!-- Vehicle Distribution Chart - Pie Chart with Percentages -->
+        <div style="background: white; border-radius: 25px; padding: 20px; border: 1px solid #b3f0f0;">
+            <h3 style="color: #043b50; margin-bottom: 20px;">
+                <i class="fas fa-chart-pie"></i> Vehicle Distribution
+            </h3>
+            <canvas id="vehicleChart" style="width: 100%; height: 280px;"></canvas>
+            <div style="text-align: center; margin-top: 10px; font-size: 12px; color: #666;">
+                <i class="fas fa-percent"></i> Percentage of bookings by vehicle type
+            </div>
         </div>
     </div>
 
     <!-- Quick Action Buttons -->
-    <div style="display: flex; gap: 20px; margin-bottom: 40px; flex-wrap: wrap;">
-        <a href="{{ url_for('manage_schedules') }}" class="btn-primary">
-            <i class="fas fa-calendar-alt"></i> Manage Schedules
-        </a>
-        <a href="{{ url_for('admin_users') }}" class="btn-primary" style="background: #28a745;">
+    <div style="display: flex; gap: 15px; margin-bottom: 40px; flex-wrap: wrap;">
+        <a href="{{ url_for('admin_users') }}" class="btn-primary" style="background: #28a745; padding: 12px 24px;">
             <i class="fas fa-users"></i> View All Users
         </a>
-        <a href="{{ url_for('admin_appointments') }}" class="btn-primary" style="background: #ffc107; color: #043b50;">
+        <a href="{{ url_for('admin_appointments') }}" class="btn-primary" style="background: #ffc107; color: #043b50; padding: 12px 24px;">
             <i class="fas fa-list"></i> All Appointments
         </a>
-        <a href="{{ url_for('courses') }}" class="btn-secondary">
-            <i class="fas fa-book"></i> Manage Courses
-        </a>
     </div>
 
-    <!-- Pending Payments Section -->
-    <h2 style="color: #043b50; margin: 40px 0 20px;">
-        <i class="fas fa-exclamation-circle" style="color: #ffc107;"></i>
-        Pending Payments ({{ pending_payments|length }})
+    <!-- Recent Appointments Section with Search -->
+    <h2 style="color: #043b50; margin: 30px 0 15px;">
+        <i class="fas fa-calendar-check"></i> Recent Appointments &nbsp;
+        <small style="font-size: 0.8rem; color: #666;">Scroll to see more ↓</small>
     </h2>
 
-    <div style="overflow-x: auto; margin: 20px 0;">
-        <table class="admin-table" style="width: 100%; border-collapse: collapse;">
-            <thead>
-                <tr style="background: #ffc107; color: #043b50;">
-                    <th style="padding: 15px; text-align: left;">Ref #</th>
-                    <th style="padding: 15px; text-align: left;">Student</th>
-                    <th style="padding: 15px; text-align: left;">Amount</th>
-                    <th style="padding: 15px; text-align: left;">Method</th>
-                    <th style="padding: 15px; text-align: left;">Date</th>
-                    <th style="padding: 15px; text-align: left;">Vehicle</th>
-                    <th style="padding: 15px; text-align: left;">Action</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for payment in pending_payments %}
-                {% if payment and payment.appointment %}
-                <tr style="border-bottom: 1px solid #cce7f0; background: #fff3cd;">
-                    <td style="padding: 15px; font-weight: 600;">{{ payment.reference_number or 'N/A' }}</td>
-                    <td style="padding: 15px;">
-                        <strong>{{ payment.appointment.full_name or 'N/A' }}</strong><br>
-                        <small style="color: #0f5e7a;">{{ payment.appointment.email or 'N/A' }}</small>
-                    </td>
-                    <td style="padding: 15px; font-weight: 700; color: #28a745;">₱{{ "%.2f"|format(payment.amount or 0) }}</td>
-                    <td style="padding: 15px;">
-                        <span style="background: #e3f7fb; padding: 5px 12px; border-radius: 30px;">
-                            {{ payment.payment_method or 'N/A' }}
-                        </span>
-                    </td>
-                    <td style="padding: 15px;">{{ payment.payment_date.strftime('%Y-%m-%d %H:%M') if payment.payment_date else 'N/A' }}</td>
-                    <td style="padding: 15px;">
-                        {% if payment.appointment.schedule and payment.appointment.schedule.course %}
-                            {{ payment.appointment.schedule.course.vehicle_type }}
-                        {% else %}
-                            4w
-                        {% endif %}
-                    </td>
-                    <td style="padding: 15px;">
-                        <form method="POST" action="{{ url_for('approve_payment', payment_id=payment.id) }}" style="display: inline;">
-                            <button type="submit" class="btn-primary" style="padding: 8px 20px; background: #28a745;"
-                                    onclick="return confirm('Approve this payment? This will confirm the appointment.')">
-                                <i class="fas fa-check"></i> Approve
-                            </button>
-                        </form>
-                        <button class="btn-secondary" style="padding: 8px 20px; margin-left: 10px;"
-                                onclick="viewDetails('{{ payment.appointment.id }}')">
-                            <i class="fas fa-eye"></i> View
-                        </button>
-                    </td>
-                </tr>
-                {% endif %}
-                {% else %}
-                <tr>
-                    <td colspan="7" style="text-align: center; padding: 40px; color: #0f5e7a;">
-                        <i class="fas fa-check-circle" style="font-size: 3rem; color: #28a745; margin-bottom: 15px; display: block;"></i>
-                        No pending payments. All bookings are approved!
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+    <!-- Search Filter for Appointments -->
+    <div style="margin-bottom: 15px; display: flex; gap: 10px; flex-wrap: wrap;">
+        <input type="text" id="appointmentSearch" placeholder="🔍 Search by name, ref #, email, or contact..."
+               style="flex: 1; padding: 12px; border: 2px solid #e0e0e0; border-radius: 10px; font-size: 14px; min-width: 200px;">
+        <button onclick="clearAppointmentSearch()" style="padding: 12px 24px; background: #6c757d; color: white; border: none; border-radius: 10px; cursor: pointer;">Clear</button>
     </div>
 
-    <!-- Recent Appointments Section -->
-    <h2 style="color: #043b50; margin: 40px 0 20px;">
-        <i class="fas fa-calendar-check"></i> Recent Appointments
-    </h2>
-    <div style="overflow-x: auto; margin: 20px 0;">
-        <table class="admin-table" style="width: 100%; border-collapse: collapse;">
-            <thead>
+    <!-- Scrollable Appointments Table -->
+    <div class="table-container" style="overflow-x: auto; max-height: 400px; overflow-y: auto; margin: 15px 0; border-radius: 20px;">
+        <table class="admin-table" id="appointmentsTable" style="width: 100%; min-width: 700px; border-collapse: collapse;">
+            <thead style="position: sticky; top: 0; background: #0f5e7a; z-index: 10;">
                 <tr style="background: #0f5e7a; color: white;">
-                    <th style="padding: 15px; text-align: left;">ID</th>
-                    <th style="padding: 15px; text-align: left;">Reference</th>
-                    <th style="padding: 15px; text-align: left;">Student</th>
-                    <th style="padding: 15px; text-align: left;">Contact</th>
-                    <th style="padding: 15px; text-align: left;">Date/Time</th>
-                    <th style="padding: 15px; text-align: left;">Status</th>
-                    <th style="padding: 15px; text-align: left;">Payment</th>
-                    <th style="padding: 15px; text-align: left;">Action</th>
+                    <th style="padding: 12px; text-align: left;">Ref #</th>
+                    <th style="padding: 12px; text-align: left;">Student</th>
+                    <th style="padding: 12px; text-align: left;">Contact</th>
+                    <th style="padding: 12px; text-align: left;">Date</th>
+                    <th style="padding: 12px; text-align: left;">Vehicle</th>
+                    <th style="padding: 12px; text-align: left;">Amount</th>
+                    <th style="padding: 12px; text-align: left;">Status</th>
                 </tr>
             </thead>
             <tbody>
                 {% for apt in recent_appointments %}
                 <tr style="border-bottom: 1px solid #cce7f0;">
-                    <td style="padding: 15px;">{{ apt.id }}</td>
-                    <td style="padding: 15px; font-weight: 600;">{{ apt.reference_number or 'N/A' }}</td>
-                    <td style="padding: 15px;">
+                    <td style="padding: 12px; font-weight: 600;" data-search="{{ apt.reference_number or '' }}">{{ apt.reference_number or 'N/A' }}</td>
+                    <td style="padding: 12px;" data-search="{{ apt.full_name or '' }} {{ apt.email or '' }}">
                         {{ apt.full_name or 'N/A' }}<br>
                         <small style="color: #0f5e7a;">{{ apt.email or 'N/A' }}</small>
                     </td>
-                    <td style="padding: 15px;">{{ apt.contact_number or 'N/A' }}</td>
-                    <td style="padding: 15px;">
-                        {{ apt.booking_date.strftime('%Y-%m-%d') if apt.booking_date else 'N/A' }}<br>
-                        <small>
-                            {% if apt.schedule and apt.schedule.start_time %}
-                                {{ apt.schedule.start_time }}
-                            {% else %}
-                                8:00 AM
-                            {% endif %}
-                        </small>
+                    <td style="padding: 12px;" data-search="{{ apt.contact_number or '' }}">{{ apt.contact_number or 'N/A' }}</td>
+                    <td style="padding: 12px;">{{ apt.booking_date.strftime('%Y-%m-%d') if apt.booking_date else 'N/A' }}</td>
+                    <td style="padding: 12px;">
+                        {% set vehicle_names = {'2w': 'Motorcycle', '3w': 'Tricycle', '4w': 'Car', '6w': 'Truck/Bus'} %}
+                        {{ vehicle_names.get(apt.vehicle_type, 'Car') if apt.vehicle_type else 'Car' }}
                     </td>
-                    <td style="padding: 15px;">
-                        <span style="background: {% if apt.status == 'Confirmed' %}#28a745{% elif apt.status == 'Pending' %}#ffc107{% else %}#6c757d{% endif %};
-                                   color: {% if apt.status == 'Pending' %}#043b50{% else %}white{% endif %};
-                                   padding: 5px 15px; border-radius: 30px; font-weight: 500;">
-                            {{ apt.status or 'N/A' }}
-                        </span>
-                    </td>
-                    <td style="padding: 15px;">
+                    <td style="padding: 12px; font-weight: 600; color: #28a745;">
                         {% if apt.payment %}
-                            <span style="background: {% if apt.payment.status == 'Paid' %}#28a745{% else %}#ffc107{% endif %};
-                                       color: {% if apt.payment.status == 'Paid' %}white{% else %}#043b50{% endif %};
-                                       padding: 5px 12px; border-radius: 30px;">
-                                {{ apt.payment.status or 'N/A' }}
-                            </span>
+                            ₱{{ "%.2f"|format(apt.payment.amount) }}
                         {% else %}
-                            <span style="background: #6c757d; color: white; padding: 5px 12px; border-radius: 30px;">
-                                No Payment
-                            </span>
+                            ₱0.00
                         {% endif %}
                     </td>
-                    <td style="padding: 15px;">
-                        <div style="display: flex; gap: 5px; flex-wrap: wrap;">
-                            <button class="btn-secondary" style="padding: 5px 12px;" onclick="viewAppointment('{{ apt.id }}')">
-                                <i class="fas fa-eye"></i>
-                            </button>
-
-                            {% if apt.status == 'Pending' %}
-                                {% if apt.payment and apt.payment.id %}
-                                    <form method="POST" action="{{ url_for('approve_payment', payment_id=apt.payment.id) }}" style="display: inline;">
-                                        <button type="submit" class="btn-primary" style="padding: 5px 12px; background: #28a745;"
-                                                onclick="return confirm('Approve this pending appointment?')">
-                                            <i class="fas fa-check"></i>
-                                        </button>
-                                    </form>
-                                {% else %}
-                                    <span style="padding: 5px 12px; color: #6c757d; font-size: 0.8rem;">No payment</span>
-                                {% endif %}
-                            {% endif %}
-                        </div>
+                    <td style="padding: 12px;">
+                        <span style="background: {% if apt.status == 'Paid' %}#28a745{% else %}#ffc107{% endif %};
+                                   color: {% if apt.status == 'Paid' %}white{% else %}#043b50{% endif %};
+                                   padding: 4px 12px; border-radius: 20px; font-size: 0.8rem;">
+                            {% if apt.status == 'Paid' %}✅ Booked{% else %}{{ apt.status }}{% endif %}
+                        </span>
                     </td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="7" style="text-align: center; padding: 40px;">No appointments found.</td>
                 </tr>
                 {% endfor %}
             </tbody>
         </table>
     </div>
 
-    <!-- Recent Users Section -->
-    <h2 style="color: #043b50; margin-top: 40px;">
-        <i class="fas fa-user-graduate"></i> Recent Users
+    <!-- Recent Users Section with Search -->
+    <h2 style="color: #043b50; margin: 30px 0 15px;">
+        <i class="fas fa-user-graduate"></i> Recent Users &nbsp;
+        <small style="font-size: 0.8rem; color: #666;">Scroll to see more ↓</small>
     </h2>
-    <div style="overflow-x: auto; margin: 20px 0;">
-        <table class="admin-table" style="width: 100%; border-collapse: collapse;">
-            <thead>
+
+    <!-- Search Filter for Users -->
+    <div style="margin-bottom: 15px; display: flex; gap: 10px; flex-wrap: wrap;">
+        <input type="text" id="userSearch" placeholder="🔍 Search by name, username, email, or phone..."
+               style="flex: 1; padding: 12px; border: 2px solid #e0e0e0; border-radius: 10px; font-size: 14px; min-width: 200px;">
+        <button onclick="clearUserSearch()" style="padding: 12px 24px; background: #6c757d; color: white; border: none; border-radius: 10px; cursor: pointer;">Clear</button>
+    </div>
+
+    <!-- Scrollable Users Table with Online/Offline Status -->
+    <div class="table-container" style="overflow-x: auto; max-height: 400px; overflow-y: auto; margin: 15px 0; border-radius: 20px;">
+        <table class="admin-table" id="usersTable" style="width: 100%; min-width: 600px; border-collapse: collapse;">
+            <thead style="position: sticky; top: 0; background: #0f5e7a; z-index: 10;">
                 <tr style="background: #0f5e7a; color: white;">
-                    <th style="padding: 15px; text-align: left;">ID</th>
-                    <th style="padding: 15px; text-align: left;">Username</th>
-                    <th style="padding: 15px; text-align: left;">Full Name</th>
-                    <th style="padding: 15px; text-align: left;">Email</th>
-                    <th style="padding: 15px; text-align: left;">Phone</th>
-                    <th style="padding: 15px; text-align: left;">Joined</th>
-                    <th style="padding: 15px; text-align: left;">Status</th>
+                    <th style="padding: 12px; text-align: left;">Status</th>
+                    <th style="padding: 12px; text-align: left;">Username</th>
+                    <th style="padding: 12px; text-align: left;">Full Name</th>
+                    <th style="padding: 12px; text-align: left;">Email</th>
+                    <th style="padding: 12px; text-align: left;">Phone</th>
+                    <th style="padding: 12px; text-align: left;">Last Active</th>
+                    <th style="padding: 12px; text-align: left;">Role</th>
                 </tr>
             </thead>
             <tbody>
                 {% for user in recent_users %}
-                <tr style="border-bottom: 1px solid #cce7f0;">
-                    <td style="padding: 15px;">{{ user.id }}</td>
-                    <td style="padding: 15px; font-weight: 600;">{{ user.username or 'N/A' }}</td>
-                    <td style="padding: 15px;">{{ user.full_name or 'N/A' }}</td>
-                    <td style="padding: 15px;">{{ user.email or 'N/A' }}</td>
-                    <td style="padding: 15px;">{{ user.phone or 'N/A' }}</td>
-                    <td style="padding: 15px;">{{ user.created_at.strftime('%Y-%m-%d') if user.created_at else 'N/A' }}</td>
-                    <td style="padding: 15px;">
-                        {% if user.is_admin %}
-                        <span style="background: #0f5e7a; color: white; padding: 5px 12px; border-radius: 30px;">
-                            Admin
-                        </span>
+                <td style="padding: 12px;">
+                    <span style="display: inline-block; width: 10px; height: 10px; border-radius: 50%; background: {% if user.is_online %}#28a745{% else %}#dc3545{% endif %}; margin-right: 8px;"></span>
+                    <span style="font-size: 0.8rem; color: {% if user.is_online %}#28a745{% else %}#dc3545{% endif %};">
+                        {% if user.is_online %}Online{% else %}Offline{% endif %}
+                    </span>
+                </td>
+                    <td style="padding: 12px; font-weight: 600;" data-search="{{ user.username or '' }}">{{ user.username or 'N/A' }}</td>
+                    <td style="padding: 12px;" data-search="{{ user.full_name or '' }}">{{ user.full_name or 'N/A' }}</td>
+                    <td style="padding: 12px;" data-search="{{ user.email or '' }}">{{ user.email or 'N/A' }}</td>
+                    <td style="padding: 12px;" data-search="{{ user.phone or '' }}">{{ user.phone or 'N/A' }}</td>
+                    <td style="padding: 12px;">
+                        {% if user.last_seen %}
+                            {{ user.last_seen.strftime('%Y-%m-%d %H:%M') }}
                         {% else %}
-                        <span style="background: #28a745; color: white; padding: 5px 12px; border-radius: 30px;">
-                            Student
-                        </span>
+                            Never
                         {% endif %}
                     </td>
+                    <td style="padding: 12px;">
+                        {% if user.is_admin %}
+                        <span style="background: #0f5e7a; color: white; padding: 4px 12px; border-radius: 20px;">Admin</span>
+                        {% else %}
+                        <span style="background: #28a745; color: white; padding: 4px 12px; border-radius: 20px;">Student</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="7" style="text-align: center; padding: 40px;">No users found.</td>
                 </tr>
                 {% endfor %}
             </tbody>
         </table>
     </div>
-
-    <!-- Quick Stats Summary -->
-    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; margin-top: 40px;">
-        <div style="background: #e3f7fb; border-radius: 30px; padding: 25px;">
-            <h3 style="color: #043b50; margin-bottom: 15px;">Today's Summary</h3>
-            <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
-                <span>New Appointments:</span>
-                <span style="font-weight: 700;">{{ today_appointments|default(0) }}</span>
-            </div>
-            <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
-                <span>Pending Approvals:</span>
-                <span style="font-weight: 700; color: #ffc107;">{{ pending_payments|length }}</span>
-            </div>
-            <div style="display: flex; justify-content: space-between;">
-                <span>Completed Today:</span>
-                <span style="font-weight: 700; color: #28a745;">{{ today_completed|default(0) }}</span>
-            </div>
-        </div>
-
-        <div style="background: #e3f7fb; border-radius: 30px; padding: 25px;">
-            <h3 style="color: #043b50; margin-bottom: 15px;">Revenue Summary</h3>
-            <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
-                <span>Pending Payments:</span>
-                <span style="font-weight: 700; color: #ffc107;">₱{{ pending_total|default('0.00') }}</span>
-            </div>
-            <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
-                <span>Confirmed Revenue:</span>
-                <span style="font-weight: 700; color: #28a745;">₱{{ confirmed_total|default('0.00') }}</span>
-            </div>
-            <div style="display: flex; justify-content: space-between;">
-                <span>This Month:</span>
-                <span style="font-weight: 700;">₱{{ monthly_total|default('0.00') }}</span>
-            </div>
-        </div>
-    </div>
 </div>
 
-<!-- JavaScript for Admin Functions -->
+<!-- Chart.js Library -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
 <script>
-    function showAllUsers() {
-        window.location.href = "{{ url_for('admin_users') }}";
+    // Revenue Chart - Bar Chart with Dates (Day 1 to Day 7)
+    const revenueCtx = document.getElementById('revenueChart').getContext('2d');
+
+    // Get current date for labels
+    const today = new Date();
+    const days = [];
+    for (let i = 6; i >= 0; i--) {
+        const d = new Date();
+        d.setDate(today.getDate() - i);
+        days.push(`Day ${d.getDate()}`);
     }
 
-    function showAllAppointments() {
-        window.location.href = "{{ url_for('admin_appointments') }}";
+    const revenueData = [{% for item in daily_revenue %}{{ item.revenue }},{% endfor %}];
+    const revenueLabels = [{% for item in daily_revenue %}'Day {{ item.date.split("-")[2] }}',{% endfor %}];
+
+    new Chart(revenueCtx, {
+        type: 'bar',
+        data: {
+            labels: revenueLabels.length > 0 ? revenueLabels : days,
+            datasets: [{
+                label: 'Revenue (₱)',
+                data: revenueData,
+                backgroundColor: '#0f5e7a',
+                borderColor: '#1a4b63',
+                borderWidth: 1,
+                borderRadius: 8,
+                barPercentage: 0.7,
+                categoryPercentage: 0.8
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            plugins: {
+                legend: {
+                    position: 'top',
+                    labels: { font: { size: 12 } }
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            return '₱' + context.raw.toFixed(2);
+                        }
+                    }
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        callback: function(value) {
+                            return '₱' + value;
+                        }
+                    },
+                    title: {
+                        display: true,
+                        text: 'Amount (₱)',
+                        color: '#666'
+                    }
+                },
+                x: {
+                    title: {
+                        display: true,
+                        text: 'Date',
+                        color: '#666'
+                    }
+                }
+            }
+        }
+    });
+
+    // Vehicle Distribution Chart - Pie Chart with Percentages
+    const vehicleCtx = document.getElementById('vehicleChart').getContext('2d');
+    const vehicleLabels = [{% for vehicle, count in vehicle_data.items() %}'{{ vehicle }}',{% endfor %}];
+    const vehicleCounts = [{% for vehicle, count in vehicle_data.items() %}{{ count }},{% endfor %}];
+    const vehicleColors = ['#0f5e7a', '#28a745', '#ffc107', '#fd7e14', '#20c997', '#6c5ce7', '#e84393'];
+
+    if (vehicleLabels.length > 0) {
+        // Calculate total and percentages
+        const total = vehicleCounts.reduce((a, b) => a + b, 0);
+
+        new Chart(vehicleCtx, {
+            type: 'pie',
+            data: {
+                labels: vehicleLabels,
+                datasets: [{
+                    data: vehicleCounts,
+                    backgroundColor: vehicleColors.slice(0, vehicleLabels.length),
+                    borderWidth: 0,
+                    hoverOffset: 10
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            font: { size: 11 },
+                            generateLabels: function(chart) {
+                                const data = chart.data;
+                                if (data.labels.length && data.datasets.length) {
+                                    return data.labels.map((label, i) => {
+                                        const value = data.datasets[0].data[i];
+                                        const percentage = ((value / total) * 100).toFixed(1);
+                                        return {
+                                            text: `${label}: ${percentage}% (${value})`,
+                                            fillStyle: data.datasets[0].backgroundColor[i],
+                                            index: i
+                                        };
+                                    });
+                                }
+                                return [];
+                            }
+                        }
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                const label = context.label || '';
+                                const value = context.raw || 0;
+                                const percentage = ((value / total) * 100).toFixed(1);
+                                return `${label}: ${value} bookings (${percentage}%)`;
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    } else {
+        vehicleCtx.font = '16px Arial';
+        vehicleCtx.fillStyle = '#999';
+        vehicleCtx.fillText('No data available', 100, 120);
     }
 
-    function viewAppointment(apptId) {
-        if (apptId) {
-            window.location.href = "/admin/appointment/" + apptId;
+    // Search filter for Appointments
+    function filterAppointments() {
+        const searchTerm = document.getElementById('appointmentSearch').value.toLowerCase();
+        const table = document.getElementById('appointmentsTable');
+        const rows = table.getElementsByTagName('tr');
+
+        for (let i = 1; i < rows.length; i++) {
+            const row = rows[i];
+            const cells = row.getElementsByTagName('td');
+            let found = false;
+
+            for (let cell of cells) {
+                const searchData = cell.getAttribute('data-search');
+                const cellText = (searchData || cell.textContent || cell.innerText).toLowerCase();
+                if (cellText.includes(searchTerm)) {
+                    found = true;
+                    break;
+                }
+            }
+            if (found) {
+                row.style.display = '';
+            } else {
+                row.style.display = 'none';
+            }
         }
     }
 
-    function viewDetails(apptId) {
-        if (apptId) {
-            window.location.href = "/admin/appointment/" + apptId;
+    // Search filter for Users
+    function filterUsers() {
+        const searchTerm = document.getElementById('userSearch').value.toLowerCase();
+        const table = document.getElementById('usersTable');
+        const rows = table.getElementsByTagName('tr');
+
+        for (let i = 1; i < rows.length; i++) {
+            const row = rows[i];
+            const cells = row.getElementsByTagName('td');
+            let found = false;
+
+            for (let cell of cells) {
+                const searchData = cell.getAttribute('data-search');
+                const cellText = (searchData || cell.textContent || cell.innerText).toLowerCase();
+                if (cellText.includes(searchTerm)) {
+                    found = true;
+                    break;
+                }
+            }
+            if (found) {
+                row.style.display = '';
+            } else {
+                row.style.display = 'none';
+            }
         }
+    }
+
+    function clearAppointmentSearch() {
+        document.getElementById('appointmentSearch').value = '';
+        filterAppointments();
+    }
+
+    function clearUserSearch() {
+        document.getElementById('userSearch').value = '';
+        filterUsers();
+    }
+
+    // Event listeners
+    if (document.getElementById('appointmentSearch')) {
+        document.getElementById('appointmentSearch').addEventListener('keyup', filterAppointments);
+    }
+    if (document.getElementById('userSearch')) {
+        document.getElementById('userSearch').addEventListener('keyup', filterUsers);
     }
 </script>
 
 <style>
-    /* Additional admin-specific styles */
+    /* Admin Dashboard Styles */
+    .stat-card {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .stat-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    }
+
     .admin-table {
-        width: 100%;
-        border-collapse: collapse;
         background: white;
-        border-radius: 20px;
-        overflow: hidden;
-        box-shadow: 0 5px 15px rgba(0,0,0,0.05);
     }
 
     .admin-table th {
         font-weight: 600;
+        font-size: 0.85rem;
         text-transform: uppercase;
-        font-size: 0.9rem;
         letter-spacing: 0.5px;
     }
 
@@ -321,39 +452,56 @@
         background: #f5fcff;
     }
 
-    .admin-table td {
-        transition: all 0.2s ease;
+    .table-container {
+        border-radius: 20px;
+        background: white;
     }
 
-    /* Pending row highlight */
-    tr:has(.pending-badge) {
-        background: #fff3cd !important;
+    /* Custom scrollbar */
+    .table-container::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
     }
 
-    /* Responsive design */
+    .table-container::-webkit-scrollbar-track {
+        background: #e0f0f5;
+        border-radius: 10px;
+    }
+
+    .table-container::-webkit-scrollbar-thumb {
+        background: #0f5e7a;
+        border-radius: 10px;
+    }
+
+    .table-container::-webkit-scrollbar-thumb:hover {
+        background: #1a4b63;
+    }
+
+    /* Mobile Responsive */
     @media (max-width: 768px) {
-        .admin-table {
-            font-size: 0.9rem;
+        .stats-grid, .revenue-grid {
+            grid-template-columns: repeat(2, 1fr) !important;
         }
 
-        .admin-table th,
-        .admin-table td {
-            padding: 10px;
+        .admin-table th, .admin-table td {
+            padding: 10px 8px !important;
+            font-size: 0.75rem !important;
         }
 
         .btn-primary, .btn-secondary {
-            padding: 8px 15px;
-            font-size: 0.9rem;
+            width: 100% !important;
+            text-align: center !important;
         }
 
-        div[style*="flex"] {
-            flex-wrap: wrap;
+        .glass-panel {
+            padding: 15px !important;
         }
     }
 
-    /* Fix for None values */
-    .admin-table td {
-        word-break: break-word;
+    @media (max-width: 480px) {
+        .stats-grid, .revenue-grid {
+            grid-template-columns: 1fr !important;
+        }
     }
 </style>
 {% endblock %}

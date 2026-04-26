@@ -3,54 +3,74 @@
 
 {% block content %}
 <div class="glass-panel">
-    <h1 style="color: #043b50;">Welcome, {{ user.full_name or user.username }}!</h1>
+    <h1 style="color: #043b50; font-size: clamp(1.5rem, 5vw, 2rem);">Welcome, {{ user.full_name or user.username }}!</h1>
 
-    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin: 40px 0;">
+    <!-- Stats Cards - Responsive Grid -->
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin: 40px 0;">
         <div class="benefit-card" style="text-align: center;">
-            <i class="fas fa-calendar-check" style="font-size: 2.5rem; color: #0f5e7a;"></i>
-            <h3>Total Appointments</h3>
-            <p style="font-size: 2rem; font-weight: 700;">{{ appointments|length }}</p>
+            <i class="fas fa-calendar-check" style="font-size: clamp(1.5rem, 5vw, 2.5rem); color: #0f5e7a;"></i>
+            <h3 style="font-size: clamp(1rem, 4vw, 1.3rem);">Total Bookings</h3>
+            <p style="font-size: clamp(1.5rem, 6vw, 2rem); font-weight: 700;">{{ appointments|length }}</p>
         </div>
         <div class="benefit-card" style="text-align: center;">
-            <i class="fas fa-clock" style="font-size: 2.5rem; color: #ffc107;"></i>
-            <h3>Pending</h3>
-            <p style="font-size: 2rem; font-weight: 700;">{{ appointments|selectattr('status', 'equalto', 'Pending')|list|length }}</p>
+            <i class="fas fa-check-circle" style="font-size: clamp(1.5rem, 5vw, 2.5rem); color: #28a745;"></i>
+            <h3 style="font-size: clamp(1rem, 4vw, 1.3rem);">Booked</h3>
+            <p style="font-size: clamp(1.5rem, 6vw, 2rem); font-weight: 700;">{{ appointments|selectattr('status', 'equalto', 'Paid')|list|length }}</p>
         </div>
         <div class="benefit-card" style="text-align: center;">
-            <i class="fas fa-check-circle" style="font-size: 2.5rem; color: #28a745;"></i>
-            <h3>Confirmed</h3>
-            <p style="font-size: 2rem; font-weight: 700;">{{ appointments|selectattr('status', 'equalto', 'Confirmed')|list|length }}</p>
+            <i class="fas fa-chart-line" style="font-size: clamp(1.5rem, 5vw, 2.5rem); color: #0f5e7a;"></i>
+            <h3 style="font-size: clamp(1rem, 4vw, 1.3rem);">Total Spent</h3>
+            <p style="font-size: clamp(1.5rem, 6vw, 2rem); font-weight: 700; color: #28a745;">
+                ₱{{ appointments|sum(attribute='payment.amount') if appointments else 0|round(2) }}
+            </p>
         </div>
     </div>
 
-    <div style="display: flex; justify-content: space-between; align-items: center; margin: 30px 0;">
-        <h2 style="color: #043b50;">My Appointments</h2>
-        <a href="{{ url_for('booking') }}" class="btn-primary">+ NEW APPOINTMENT</a>
+    <!-- Header with Button - Responsive -->
+    <div style="display: flex; flex-direction: row; justify-content: space-between; align-items: center; margin: 30px 0; flex-wrap: wrap; gap: 15px;">
+        <h2 style="color: #043b50; font-size: clamp(1.3rem, 5vw, 1.8rem);">My Bookings</h2>
+        <a href="{{ url_for('booking') }}" class="btn-primary" style="white-space: nowrap;">+ NEW BOOKING</a>
     </div>
 
     {% if appointments %}
-        <div style="overflow-x: auto;">
-            <table style="width: 100%; border-collapse: collapse;">
+        <!-- Table Container with Horizontal Scroll for Mobile -->
+        <div style="overflow-x: auto; -webkit-overflow-scrolling: touch; margin: 0 -5px; padding: 0 5px;">
+            <table style="width: 100%; border-collapse: collapse; min-width: 500px;">
                 <thead>
                     <tr style="background: #e3f7fb;">
-                        <th style="padding: 15px; text-align: left;">Reference</th>
-                        <th style="padding: 15px; text-align: left;">Date</th>
-                        <th style="padding: 15px; text-align: left;">Status</th>
-                        <th style="padding: 15px; text-align: left;">Action</th>
+                        <th style="padding: 12px 15px; text-align: left; font-size: clamp(0.85rem, 3vw, 1rem);">Reference</th>
+                        <th style="padding: 12px 15px; text-align: left; font-size: clamp(0.85rem, 3vw, 1rem);">Date</th>
+                        <th style="padding: 12px 15px; text-align: left; font-size: clamp(0.85rem, 3vw, 1rem);">Vehicle</th>
+                        <th style="padding: 12px 15px; text-align: left; font-size: clamp(0.85rem, 3vw, 1rem);">Amount</th>
+                        <th style="padding: 12px 15px; text-align: left; font-size: clamp(0.85rem, 3vw, 1rem);">Status</th>
+                        <th style="padding: 12px 15px; text-align: left; font-size: clamp(0.85rem, 3vw, 1rem);">Action</th>
                     </tr>
                 </thead>
                 <tbody>
                     {% for apt in appointments %}
                     <tr style="border-bottom: 1px solid #cce7f0;">
-                        <td style="padding: 15px;">{{ apt.reference_number }}</td>
-                        <td style="padding: 15px;">{{ apt.booking_date.strftime('%Y-%m-%d') if apt.booking_date else 'N/A' }}</td>
-                        <td style="padding: 15px;">
-                            <span style="background: {% if apt.status == 'Confirmed' %}#28a745{% elif apt.status == 'Pending' %}#ffc107{% else %}#6c757d{% endif %}; color: white; padding: 5px 15px; border-radius: 30px;">
-                                {{ apt.status }}
+                        <td style="padding: 12px 15px; font-size: clamp(0.8rem, 3vw, 0.95rem); font-weight: 600;">{{ apt.reference_number }}</td>
+                        <td style="padding: 12px 15px; font-size: clamp(0.8rem, 3vw, 0.95rem);">{{ apt.booking_date.strftime('%Y-%m-%d') if apt.booking_date else 'N/A' }}</td>
+                        <td style="padding: 12px 15px; font-size: clamp(0.8rem, 3vw, 0.95rem);">
+                            {% set vehicle_names = {'2w': 'Motorcycle', '3w': 'Tricycle', '4w': 'Car', '6w': 'Truck/Bus'} %}
+                            {{ vehicle_names.get(apt.vehicle_type, 'Car') if apt.vehicle_type else 'Car' }}
+                        </td>
+                        <td style="padding: 12px 15px; font-size: clamp(0.8rem, 3vw, 0.95rem); font-weight: 600; color: #28a745;">
+                            {% if apt.payment %}
+                                ₱{{ "%.2f"|format(apt.payment.amount) }}
+                            {% else %}
+                                ₱0.00
+                            {% endif %}
+                        </td>
+                        <td style="padding: 12px 15px;">
+                            <span style="background: {% if apt.status == 'Paid' %}#28a745{% elif apt.status == 'Confirmed' %}#17a2b8{% else %}#ffc107{% endif %}; color: white; padding: 5px 12px; border-radius: 30px; font-size: clamp(0.75rem, 3vw, 0.85rem); white-space: nowrap;">
+                                {% if apt.status == 'Paid' %}✅ Booked{% elif apt.status == 'Confirmed' %}Confirmed{% else %}{{ apt.status }}{% endif %}
                             </span>
                         </td>
-                        <td style="padding: 15px;">
-                            <a href="#" class="btn-secondary" style="padding: 8px 20px;">View</a>
+                        <td style="padding: 12px 15px;">
+                            <button onclick="viewBooking('{{ apt.reference_number }}')" class="btn-secondary" style="padding: 6px 15px; font-size: clamp(0.75rem, 3vw, 0.85rem); cursor: pointer;">
+                                <i class="fas fa-eye"></i> View
+                            </button>
                         </td>
                     </tr>
                     {% endfor %}
@@ -58,11 +78,385 @@
             </table>
         </div>
     {% else %}
-        <div style="text-align: center; padding: 50px; background: #f5fcff; border-radius: 40px;">
-            <i class="fas fa-calendar-times" style="font-size: 4rem; color: #cce7f0;"></i>
-            <p style="margin: 20px 0; color: #0f5e7a;">No appointments yet. Book your first TDC session today!</p>
-            <a href="{{ url_for('booking') }}" class="btn-primary">BOOK NOW</a>
+        <!-- Empty State - Responsive -->
+        <div style="text-align: center; padding: clamp(30px, 8vw, 50px); background: #f5fcff; border-radius: 40px; margin: 20px 0;">
+            <i class="fas fa-calendar-times" style="font-size: clamp(2rem, 8vw, 4rem); color: #cce7f0;"></i>
+            <p style="margin: 20px 0; color: #0f5e7a; font-size: clamp(0.9rem, 4vw, 1rem);">No bookings yet. Book your first TDC session today!</p>
+            <a href="{{ url_for('booking') }}" class="btn-primary" style="display: inline-block;">BOOK NOW</a>
         </div>
     {% endif %}
 </div>
+
+<!-- Modal for Booking Details - Receipt Style -->
+<div id="bookingModal" style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.8); z-index: 10000; align-items: center; justify-content: center;">
+    <div style="background: white; border-radius: 20px; max-width: 550px; width: 90%; max-height: 85vh; overflow-y: auto; padding: 0;">
+        <div id="modalContent">
+            <div style="text-align: center; padding: 40px;">
+                <div class="loader"></div>
+                <p>Loading...</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .loader {
+        border: 4px solid #e0f0f5;
+        border-top: 4px solid #0f5e7a;
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        animation: spin 1s linear infinite;
+        margin: 0 auto;
+    }
+
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+
+    /* Receipt modal styles */
+    .receipt-modal-header {
+        background: #0f5e7a;
+        color: white;
+        padding: 20px;
+        text-align: center;
+        border-radius: 20px 20px 0 0;
+    }
+
+    .receipt-section {
+        background: #f5fcff;
+        border-radius: 12px;
+        padding: 12px;
+        margin-bottom: 15px;
+    }
+
+    .receipt-label {
+        color: #6c757d;
+        font-size: 0.65rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .receipt-value {
+        font-weight: 600;
+        color: #043b50;
+        font-size: 0.85rem;
+        word-break: break-word;
+    }
+
+    /* Hide buttons when printing */
+    @media print {
+        .no-print, .btn-primary, .btn-secondary, .close-btn {
+            display: none !important;
+        }
+        .modal-content-print {
+            margin: 0;
+            padding: 0;
+        }
+        .receipt-modal-header {
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+        .receipt-section {
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+        div[style*="background: #0f5e7a"] {
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+    }
+
+    /* Mobile fixes */
+    @media (max-width: 768px) {
+        .benefit-card {
+            padding: 15px !important;
+        }
+
+        .btn-primary {
+            white-space: normal !important;
+            text-align: center !important;
+        }
+
+        table td, table th {
+            padding: 10px 8px !important;
+        }
+
+        .receipt-label {
+            font-size: 0.55rem !important;
+        }
+
+        .receipt-value {
+            font-size: 0.75rem !important;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .benefit-card h3 {
+            font-size: 0.9rem !important;
+        }
+
+        table td, table th {
+            padding: 8px 6px !important;
+            font-size: 0.7rem !important;
+        }
+
+        .btn-secondary {
+            padding: 4px 8px !important;
+            font-size: 0.7rem !important;
+        }
+
+        .receipt-modal-header h2 {
+            font-size: 1rem !important;
+        }
+
+        .receipt-modal-header p {
+            font-size: 0.6rem !important;
+        }
+    }
+</style>
+
+<script>
+    function viewBooking(referenceNumber) {
+        const modal = document.getElementById('bookingModal');
+        modal.style.display = 'flex';
+
+        fetch(`/api/booking/${referenceNumber}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    const booking = data.booking;
+                    const vehicleNames = {'2w': 'Motorcycle', '3w': 'Tricycle', '4w': 'Car', '6w': 'Truck/Bus'};
+                    const vehicleDisplay = vehicleNames[booking.vehicle_type] || booking.vehicle_type || 'Car';
+
+                    const paymentDate = booking.payment_date ? new Date(booking.payment_date).toLocaleDateString() : 'N/A';
+                    const transactionId = booking.transaction_id || 'N/A';
+                    const paymentMethod = booking.payment_method || 'N/A';
+                    const bookingDate = new Date(booking.booking_date).toLocaleDateString();
+                    const location = booking.location || 'EcoDrive Main Center';
+                    const amount = parseFloat(booking.payment_amount).toFixed(2);
+
+                    document.getElementById('modalContent').innerHTML = `
+                        <div style="background: white; border-radius: 20px; overflow: hidden;">
+                            <div class="receipt-modal-header">
+                                <div style="background: rgba(255,255,255,0.2); width: 50px; height: 50px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; margin-bottom: 10px;">
+                                    <i class="fas fa-check-circle" style="font-size: 1.5rem; color: #4ae0d0;"></i>
+                                </div>
+                                <h2 style="margin: 5px 0; font-size: 1.2rem;">Booking Details</h2>
+                                <p style="margin: 0; font-size: 0.7rem; opacity: 0.9;">Reference: ${booking.reference_number}</p>
+                            </div>
+
+                            <div style="padding: 20px;" id="printableReceipt">
+                                <div style="text-align: center; border-bottom: 2px solid #cce7f0; padding-bottom: 12px; margin-bottom: 15px;">
+                                    <i class="fas fa-car" style="font-size: 1.5rem; color: #0f5e7a;"></i>
+                                    <h3 style="color: #043b50; margin: 5px 0; font-size: 1.1rem;">EcoDrive Theory</h3>
+                                    <p style="color: #6c757d; font-size: 0.65rem;">Official Booking Receipt</p>
+                                </div>
+
+                                <div style="display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 15px;">
+                                    <div style="flex: 1; min-width: 180px;">
+                                        <div style="margin-bottom: 10px;">
+                                            <div class="receipt-label">TRANSACTION ID</div>
+                                            <div class="receipt-value">${transactionId}</div>
+                                        </div>
+                                        <div style="margin-bottom: 10px;">
+                                            <div class="receipt-label">PAYMENT DATE</div>
+                                            <div class="receipt-value">${paymentDate}</div>
+                                        </div>
+                                        <div style="margin-bottom: 10px;">
+                                            <div class="receipt-label">PAYMENT METHOD</div>
+                                            <div class="receipt-value">${paymentMethod}</div>
+                                        </div>
+                                    </div>
+                                    <div style="flex: 1; min-width: 180px;">
+                                        <div style="margin-bottom: 10px;">
+                                            <div class="receipt-label">BOOKING DATE</div>
+                                            <div class="receipt-value">${bookingDate}</div>
+                                        </div>
+                                        <div style="margin-bottom: 10px;">
+                                            <div class="receipt-label">TIME</div>
+                                            <div class="receipt-value">Full Day (8:00 AM - 5:00 PM)</div>
+                                        </div>
+                                        <div style="margin-bottom: 10px;">
+                                            <div class="receipt-label">STATUS</div>
+                                            <div><span style="background: #28a745; color: white; padding: 3px 10px; border-radius: 15px; font-size: 0.7rem;">✅ Booked</span></div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="receipt-section">
+                                    <h4 style="color: #043b50; margin-bottom: 8px; font-size: 0.8rem;">
+                                        <i class="fas fa-user"></i> Customer Information
+                                    </h4>
+                                    <div style="display: flex; flex-wrap: wrap; gap: 8px; font-size: 0.75rem;">
+                                        <div style="flex: 1;"><strong>Name:</strong> ${booking.full_name}</div>
+                                        <div style="flex: 1;"><strong>Email:</strong> ${booking.email}</div>
+                                        <div style="flex: 1;"><strong>Contact:</strong> ${booking.contact_number}</div>
+                                    </div>
+                                </div>
+
+                                <div class="receipt-section" style="background: #e3f7fb;">
+                                    <h4 style="color: #043b50; margin-bottom: 8px; font-size: 0.8rem;">
+                                        <i class="fas fa-car"></i> Vehicle Information
+                                    </h4>
+                                    <div style="font-size: 0.75rem;">
+                                        <strong>Vehicle Type:</strong> ${vehicleDisplay}
+                                    </div>
+                                </div>
+
+                                <div class="receipt-section">
+                                    <h4 style="color: #043b50; margin-bottom: 8px; font-size: 0.8rem;">
+                                        <i class="fas fa-map-marker-alt"></i> Location
+                                    </h4>
+                                    <div style="font-size: 0.75rem;">
+                                        ${location}
+                                    </div>
+                                </div>
+
+                                <div style="background: #0f5e7a; border-radius: 12px; padding: 12px; margin-bottom: 15px; text-align: center;">
+                                    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;">
+                                        <span style="color: white; font-size: 0.8rem;">Total Amount Paid:</span>
+                                        <span style="color: #4ae0d0; font-size: 1.3rem; font-weight: 700;">₱${amount}</span>
+                                    </div>
+                                </div>
+
+                                <div style="text-align: center; padding-top: 10px; border-top: 1px solid #cce7f0;">
+                                    <p style="color: #0f5e7a; margin-bottom: 5px; font-size: 0.75rem;">Thank you for choosing EcoDrive Theory!</p>
+                                    <p style="color: #6c757d; font-size: 0.65rem;">Please present this receipt on your appointment date.</p>
+                                </div>
+                            </div>
+
+                            <div class="no-print" style="padding: 15px 20px 20px 20px; border-top: 1px solid #cce7f0; background: white; border-radius: 0 0 20px 20px;">
+                                <div style="display: flex; justify-content: center; gap: 12px; flex-wrap: wrap;">
+                                    <button onclick="printReceipt()" class="btn-secondary" style="padding: 8px 20px; font-size: 0.75rem; cursor: pointer;">
+                                        <i class="fas fa-print"></i> Print Receipt
+                                    </button>
+                                    <button onclick="closeModal()" class="btn-primary" style="padding: 8px 20px; font-size: 0.75rem; background: #0f5e7a; cursor: pointer;">
+                                        Close
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    document.getElementById('modalContent').innerHTML = `
+                        <div style="text-align: center; padding: 40px;">
+                            <i class="fas fa-exclamation-circle" style="font-size: 3rem; color: #dc3545;"></i>
+                            <p style="margin-top: 15px;">${data.message || 'Booking not found'}</p>
+                            <button onclick="closeModal()" class="btn-primary" style="margin-top: 20px;">Close</button>
+                        </div>
+                    `;
+                }
+            })
+            .catch(error => {
+                document.getElementById('modalContent').innerHTML = `
+                    <div style="text-align: center; padding: 40px;">
+                        <i class="fas fa-exclamation-circle" style="font-size: 3rem; color: #dc3545;"></i>
+                        <p style="margin-top: 15px;">Error loading booking details</p>
+                        <button onclick="closeModal()" class="btn-primary" style="margin-top: 20px;">Close</button>
+                    </div>
+                `;
+            });
+    }
+
+    function printReceipt() {
+        const printContent = document.getElementById('printableReceipt').cloneNode(true);
+        const printWindow = window.open('', '_blank');
+
+        printWindow.document.write(`
+            <!DOCTYPE html>
+            <html>
+            <head>
+                <title>EcoDrive Theory - Receipt</title>
+                <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+                <style>
+                    * {
+                        margin: 0;
+                        padding: 0;
+                        box-sizing: border-box;
+                    }
+                    body {
+                        font-family: 'Inter', Arial, sans-serif;
+                        margin: 0;
+                        padding: 20px;
+                        background: white;
+                    }
+                    .receipt-container {
+                        max-width: 500px;
+                        margin: 0 auto;
+                        background: white;
+                        border-radius: 20px;
+                    }
+                    .receipt-label {
+                        color: #6c757d;
+                        font-size: 0.65rem;
+                        text-transform: uppercase;
+                        letter-spacing: 0.5px;
+                    }
+                    .receipt-value {
+                        font-weight: 600;
+                        color: #043b50;
+                        font-size: 0.85rem;
+                    }
+                    .receipt-section {
+                        background: #f5fcff;
+                        border-radius: 12px;
+                        padding: 12px;
+                        margin-bottom: 15px;
+                    }
+                    .receipt-modal-header {
+                        background: #0f5e7a;
+                        color: white;
+                        padding: 20px;
+                        text-align: center;
+                        border-radius: 20px 20px 0 0;
+                    }
+                    @media print {
+                        body {
+                            padding: 0;
+                            margin: 0;
+                        }
+                        .receipt-modal-header {
+                            -webkit-print-color-adjust: exact;
+                            print-color-adjust: exact;
+                        }
+                        .receipt-section {
+                            -webkit-print-color-adjust: exact;
+                            print-color-adjust: exact;
+                        }
+                        div[style*="background: #0f5e7a"] {
+                            -webkit-print-color-adjust: exact;
+                            print-color-adjust: exact;
+                        }
+                    }
+                </style>
+            </head>
+            <body>
+                <div class="receipt-container">
+                    ${printContent.innerHTML}
+                </div>
+            </body>
+            </html>
+        `);
+        printWindow.document.close();
+        printWindow.print();
+    }
+
+    function closeModal() {
+        document.getElementById('bookingModal').style.display = 'none';
+        document.getElementById('modalContent').innerHTML = `
+            <div style="text-align: center; padding: 40px;">
+                <div class="loader"></div>
+                <p>Loading...</p>
+            </div>
+        `;
+    }
+
+    document.getElementById('bookingModal').addEventListener('click', function(e) {
+        if (e.target === this) {
+            closeModal();
+        }
+    });
+</script>
 {% endblock %}

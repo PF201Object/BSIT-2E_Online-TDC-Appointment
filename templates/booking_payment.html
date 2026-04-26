@@ -1,63 +1,123 @@
 {% extends "booking_step.html" %}
 {% set step = 4 %}
 {% block step_content %}
-<h2 style="color: #043b50; margin-bottom: 20px;">Payment Method</h2>
 
-<form method="POST" action="{{ url_for('booking_process') }}">
-    <div style="background: #f5fcff; border-radius: 30px; padding: 30px; margin-bottom: 30px;">
-        <h3 style="color: #043b50; margin-bottom: 20px;">Order Summary</h3>
+<h2 style="color: #043b50; margin-bottom: 15px; font-size: clamp(1.2rem, 5vw, 1.8rem);">Payment Method</h2>
+<p style="color: #0f5e7a; margin-bottom: 20px; font-size: clamp(0.85rem, 3vw, 1rem);">Select your preferred payment method</p>
 
-        <div style="display: flex; justify-content: space-between; padding: 15px 0; border-bottom: 1px solid #cce7f0;">
-            <span style="color: #0f5e7a;">Vehicle Type:</span>
-            <span style="font-weight: 600; color: #043b50;">{{ vehicle }}</span>
+<form id="paymentForm" method="POST" action="{{ url_for('booking_process') }}">
+    <div style="background: #f5fcff; border-radius: 20px; padding: clamp(15px, 4vw, 20px); margin-bottom: 20px;">
+        <h3 style="color: #043b50; margin-bottom: 15px; font-size: clamp(0.9rem, 4vw, 1.1rem);">Order Summary</h3>
+        <div style="display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #cce7f0;">
+            <span style="color: #0f5e7a;">Vehicle:</span>
+            <span style="font-weight: 600;">{{ vehicle }}</span>
         </div>
-
-        <div style="display: flex; justify-content: space-between; padding: 15px 0; border-bottom: 1px solid #cce7f0;">
+        <div style="display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #cce7f0;">
             <span style="color: #0f5e7a;">Date:</span>
-            <span style="font-weight: 600; color: #043b50;">{{ session.get('booking_date') }}</span>
+            <span style="font-weight: 600;">{{ session.get('booking_date') }}</span>
         </div>
-
-        <div style="display: flex; justify-content: space-between; padding: 15px 0; border-bottom: 1px solid #cce7f0;">
-            <span style="color: #0f5e7a;">Time:</span>
-            <span style="font-weight: 600; color: #043b50;">{{ session.get('booking_time') }}</span>
-        </div>
-
-        <div style="display: flex; justify-content: space-between; padding: 20px 0;">
-            <span style="font-size: 1.3rem; color: #043b50;">Total Amount:</span>
-            <span style="font-size: 1.8rem; font-weight: 700; color: #28a745;">₱{{ "%.2f"|format(amount) }}</span>
-        </div>
-
-        <div style="background: #fff3cd; border-radius: 20px; padding: 15px; margin-top: 20px;">
-            <i class="fas fa-info-circle" style="color: #856404;"></i>
-            <span style="color: #856404; margin-left: 10px;">
-                Your booking will be pending until admin approves the payment.
-            </span>
+        <div style="display: flex; justify-content: space-between; padding: 15px 0;">
+            <span style="font-size: clamp(0.9rem, 4vw, 1.1rem);">Total:</span>
+            <span style="font-size: clamp(1.2rem, 5vw, 1.5rem); font-weight: 700; color: #28a745;">₱{{ "%.2f"|format(amount) }}</span>
         </div>
     </div>
 
-    <div style="background: #f5fcff; border-radius: 30px; padding: 30px;">
-        <h3 style="color: #043b50; margin-bottom: 20px;">Select Payment Method</h3>
-
-        <select name="payment_method" class="form-control" required style="padding: 18px; border-radius: 60px;">
+    <div style="background: #f5fcff; border-radius: 20px; padding: clamp(15px, 4vw, 20px); margin-bottom: 20px;">
+        <h3 style="color: #043b50; margin-bottom: 15px; font-size: clamp(0.9rem, 4vw, 1.1rem);">Select Payment Method</h3>
+        <select name="payment_method" id="paymentMethod" class="form-control" required style="width: 100%; padding: 12px; border-radius: 50px; font-size: 16px;">
             <option value="" disabled selected>-- Choose Payment Method --</option>
             <option value="GCash">📱 GCash</option>
             <option value="Maya">📱 Maya</option>
-            <option value="Credit Card">💳 Credit/Debit Card</option>
+            <option value="Credit Card">💳 Credit Card</option>
             <option value="BDO Online Banking">🏦 BDO Online Banking</option>
             <option value="BPI Online Banking">🏦 BPI Online Banking</option>
             <option value="UnionBank">🏦 UnionBank</option>
-            <option value="7-Eleven">🏪 7-Eleven (ECPay)</option>
-            <option value="Cebuana Lhuillier">💰 Cebuana Lhuillier</option>
         </select>
     </div>
 
-    <div style="display: flex; justify-content: space-between; margin-top: 30px;">
-        <a href="{{ url_for('booking') }}" class="btn-secondary">
+    <div id="qrSection" style="background: #f5fcff; border-radius: 20px; padding: clamp(15px, 4vw, 20px); margin-bottom: 20px; display: none; text-align: center;">
+        <h3 style="font-size: clamp(0.9rem, 4vw, 1rem);"><i class="fas fa-qrcode"></i> Scan to Pay</h3>
+        <div id="qrCodeContainer" style="background: white; padding: 15px; border-radius: 15px; display: inline-block;">
+            <div id="qrcode"></div>
+        </div>
+        <p id="paymentInstructions" style="font-size: clamp(0.75rem, 3vw, 0.85rem); margin-top: 10px;"></p>
+        <div style="background: #e8f5e9; border-radius: 12px; padding: 10px; margin-top: 10px;">
+            <span style="font-size: clamp(0.7rem, 3vw, 0.8rem);">After scanning, click "Complete Payment" below</span>
+        </div>
+    </div>
+
+    <div style="display: flex; justify-content: space-between; margin-top: 20px; gap: 15px; flex-wrap: wrap;">
+        <a href="{{ url_for('booking') }}" class="btn-secondary" style="flex: 1; text-align: center; padding: 12px; border-radius: 50px; text-decoration: none;">
             <i class="fas fa-arrow-left"></i> Back
         </a>
-        <button type="submit" class="btn-primary">
-            Submit Booking <i class="fas fa-check"></i>
+        <button type="button" id="markPaidBtn" class="btn-primary" style="flex: 1; padding: 12px; border-radius: 50px; background: #28a745;" disabled>
+            Complete Payment
         </button>
     </div>
 </form>
+
+<div id="loadingOverlay" style="display: none; position: fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.8); z-index:9999; align-items:center; justify-content:center;">
+    <div style="background:white; padding:30px; border-radius:20px; text-align:center; max-width:90%;">
+        <div class="loader"></div>
+        <h3 style="margin-top:15px;">Processing...</h3>
+        <div style="width:100%; background:#e0f0f5; border-radius:10px; margin-top:15px;">
+            <div id="progressBar" style="width:0%; height:8px; background:#28a745; border-radius:10px;"></div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+<script>
+    const actualAmount = parseFloat("{{ amount }}");
+    const actualVehicle = "{{ vehicle }}";
+    const actualDate = "{{ session.get('booking_date', '') }}";
+
+    let currentQRCode = null;
+    document.getElementById('paymentMethod').addEventListener('change', function() {
+        const method = this.value;
+        const qrSection = document.getElementById('qrSection');
+        const markBtn = document.getElementById('markPaidBtn');
+        if (method) {
+            qrSection.style.display = 'block';
+            markBtn.disabled = false;
+            markBtn.style.opacity = '1';
+            document.getElementById('qrcode').innerHTML = '';
+            generateQR(method);
+        } else {
+            qrSection.style.display = 'none';
+            markBtn.disabled = true;
+        }
+    });
+
+    function generateQR(method) {
+        const qrString = JSON.stringify({
+            merchant: "EcoDrive Theory",
+            amount: actualAmount.toFixed(2),
+            method: method,
+            date: actualDate
+        });
+        currentQRCode = new QRCode(document.getElementById("qrcode"), {
+            text: qrString,
+            width: 200,
+            height: 200,
+            colorDark: "#0f5e7a",
+            correctLevel: QRCode.CorrectLevel.M
+        });
+        document.getElementById('paymentInstructions').innerHTML = `Scan with ${method} app to pay ₱${actualAmount.toFixed(2)}`;
+    }
+
+    document.getElementById('markPaidBtn').addEventListener('click', function() {
+        const loading = document.getElementById('loadingOverlay');
+        const progress = document.getElementById('progressBar');
+        loading.style.display = 'flex';
+        let p = 0;
+        const interval = setInterval(() => { p += 2; progress.style.width = p + '%'; if(p>=100) clearInterval(interval); }, 100);
+        setTimeout(() => document.getElementById('paymentForm').submit(), 10000);
+    });
+</script>
+<style>
+    .loader { border: 4px solid #e0f0f5; border-top: 4px solid #0f5e7a; border-radius: 50%; width: 50px; height: 50px; animation: spin 1s linear infinite; margin: 0 auto; }
+    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    @media (max-width: 768px) { .btn-secondary, .btn-primary { width: 100% !important; } #qrcode img, #qrcode canvas { width: 150px !important; height: 150px !important; } }
+</style>
 {% endblock %}

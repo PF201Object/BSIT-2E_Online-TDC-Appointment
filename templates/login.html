@@ -2,31 +2,78 @@
 {% block title %}Login - EcoDrive Theory{% endblock %}
 
 {% block content %}
-<div class="glass-panel" style="max-width: 600px; margin: 20px auto;">
-    <div class="form-container">
-        <h2 class="form-title">Welcome Back</h2>
-        <p style="text-align: center; color: #0f5e7a; margin-bottom: 25px;">Unlock your freedom! Your journey starts right here.</p>
+<div class="glass-panel" style="max-width: 500px; margin: 20px auto;">
+    <h2 class="form-title">Welcome Back</h2>
+    <p style="text-align: center; color: #0f5e7a; margin-bottom: 25px; font-size: clamp(0.9rem, 3vw, 1rem);">Unlock your freedom! Your journey starts right here.</p>
 
-        <form method="POST" action="{{ url_for('login') }}">
-            <div class="form-group">
-                <input type="text" name="username" class="form-control" placeholder="Username" required autofocus>
-            </div>
-            <div class="form-group">
-                <input type="password" name="password" class="form-control" placeholder="Password" required>
-            </div>
-            <button type="submit" class="btn-primary">LOGIN</button>
-        </form>
-
-        <div style="text-align: center; margin-top: 25px;">
-            <p class="register-text">Don't have an account? <a href="{{ url_for('register') }}" style="color: #0f5e7a; font-weight: 600; text-decoration: underline;">REGISTER</a></p>
+    <form method="POST" action="{{ url_for('login') }}">
+        <div class="form-group">
+            <input type="text" name="username" class="form-control" placeholder="Username" required autofocus>
         </div>
+
+        <div class="form-group" style="position: relative;">
+            <input type="password" name="password" id="password" class="form-control" placeholder="Password" required style="padding-right: 50px;">
+            <button type="button" id="togglePassword" style="position: absolute; right: 15px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; color: #0f5e7a; font-size: 1.2rem;">
+                <i class="fas fa-eye"></i>
+            </button>
+        </div>
+
+        <button type="submit" class="btn-primary">LOGIN</button>
+    </form>
+
+    <!-- DIVIDER -->
+    <div style="text-align: center; margin: 20px 0; position: relative;">
+        <hr style="border: none; border-top: 1px solid #ddd;">
+        <span style="background: white; padding: 0 15px; color: #999; position: relative; top: -12px;">OR</span>
+    </div>
+
+    <!-- GOOGLE LOGIN BUTTON -->
+    <a href="{{ url_for('google_login') }}" style="text-decoration: none;">
+        <button type="button" style="width: 100%; padding: 12px; background: white; color: #333; border: 2px solid #ddd; border-radius: 10px; font-size: 16px; font-weight: 500; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; transition: all 0.3s; margin-bottom: 20px;">
+            <svg width="20" height="20" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <g transform="matrix(1, 0, 0, 1, 0, 0)">
+                    <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+                    <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+                    <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
+                    <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+                </g>
+            </svg>
+            Continue with Google
+        </button>
+    </a>
+
+    <div style="text-align: center; margin-top: 25px;">
+        <p style="font-size: clamp(0.85rem, 3vw, 1rem);">Don't have an account? <a href="{{ url_for('register') }}" style="color: #0f5e7a; font-weight: 600; text-decoration: underline;">REGISTER</a></p>
     </div>
 </div>
 
-<!-- Driving School Callout -->
-<div class="glass-panel" style="margin-top: 20px; text-align: center;">
-    <h2 style="color: #043b50;">DRIVING SCHOOL</h2>
-    <a href="{{ url_for('about') }}" class="btn-secondary" style="margin: 15px 0;">LEARN MORE</a>
-    <p style="font-size: 1.2rem; color: #0f5e7a; font-weight: 600;">Don't just learn to drive<br>Learn to lead the way.</p>
-</div>
+<script>
+    const togglePassword = document.getElementById('togglePassword');
+    const password = document.getElementById('password');
+
+    togglePassword.addEventListener('click', function() {
+        const type = password.getAttribute('type') === 'password' ? 'text' : 'password';
+        password.setAttribute('type', type);
+        const icon = this.querySelector('i');
+        if (type === 'text') {
+            icon.classList.remove('fa-eye');
+            icon.classList.add('fa-eye-slash');
+        } else {
+            icon.classList.remove('fa-eye-slash');
+            icon.classList.add('fa-eye');
+        }
+    });
+</script>
+
+<style>
+    @media (max-width: 768px) {
+        .form-control {
+            padding-right: 45px !important;
+        }
+        #togglePassword {
+            right: 12px !important;
+            font-size: 1rem !important;
+        }
+    }
+</style>
 {% endblock %}

@@ -3,12 +3,12 @@
 
 {% block content %}
 <div class="glass-panel">
-    <h1 style="font-size: 2.5rem; color: #043b50; margin-bottom: 20px; text-align: center;">Driving Courses</h1>
-    <p style="text-align: center; color: #0f5e7a; font-size: 1.2rem; margin-bottom: 40px;">Choose the perfect course for your driving journey</p>
+    <h1 style="font-size: clamp(2rem, 5vw, 3rem); color: #043b50; margin-bottom: 20px; text-align: center;">Driving Courses</h1>
+    <p style="text-align: center; color: #0f5e7a; font-size: clamp(1rem, 4vw, 1.2rem); margin-bottom: 40px;">Choose the perfect course for your driving journey</p>
 
-    <div class="course-grid">
+    <div class="course-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 25px;">
         {% for course in courses %}
-        <div class="course-card">
+        <div class="course-card" onclick="viewCourse({{ course.id }})" style="cursor: pointer; transition: all 0.3s ease;">
             <div class="course-icon">
                 {% if '2w' in course.vehicle_type %}
                     <i class="fas fa-motorcycle"></i>
@@ -27,11 +27,9 @@
             <div class="course-price">₱{{ "%.2f"|format(course.price) }}</div>
             <span class="course-badge">{{ course.hours }} hours</span>
             <div style="margin-top: 20px;">
-                {% if session.user_id %}
-                    <a href="{{ url_for('booking') }}?course={{ course.id }}" class="btn-primary" style="padding: 12px 30px;">Enroll Now</a>
-                {% else %}
-                    <a href="{{ url_for('login') }}" class="btn-primary" style="padding: 12px 30px;">Login to Enroll</a>
-                {% endif %}
+                <button class="btn-primary" style="padding: 12px 30px; width: 100%;">
+                    <i class="fas fa-info-circle"></i> View Details
+                </button>
             </div>
         </div>
         {% else %}
@@ -43,9 +41,9 @@
     </div>
 
     <!-- Additional Info -->
-    <div style="margin-top: 50px; background: #e3f7fb; border-radius: 40px; padding: 30px; text-align: center;">
-        <h3 style="color: #043b50; margin-bottom: 15px;">Why Choose Our Courses?</h3>
-        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;">
+    <div style="margin-top: 50px; background: linear-gradient(135deg, #e3f7fb, #cce7f0); border-radius: 40px; padding: clamp(20px, 5vw, 40px); text-align: center;">
+        <h3 style="color: #043b50; margin-bottom: 15px; font-size: clamp(1.2rem, 4vw, 1.5rem);">Why Choose Our Courses?</h3>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-top: 20px;">
             <div>
                 <i class="fas fa-certificate" style="font-size: 2rem; color: #0f5e7a;"></i>
                 <p style="margin-top: 10px;">LTO Accredited</p>
@@ -58,7 +56,41 @@
                 <i class="fas fa-chalkboard-teacher" style="font-size: 2rem; color: #0f5e7a;"></i>
                 <p style="margin-top: 10px;">Expert Instructors</p>
             </div>
+            <div>
+                <i class="fas fa-globe" style="font-size: 2rem; color: #0f5e7a;"></i>
+                <p style="margin-top: 10px;">Online Theory</p>
+            </div>
         </div>
     </div>
 </div>
+
+<script>
+    function viewCourse(courseId) {
+        window.location.href = "{{ url_for('course_detail', course_id=0) }}".replace('0', courseId);
+    }
+</script>
+
+<style>
+    .course-card {
+        background: white;
+        border-radius: 30px;
+        padding: 25px;
+        text-align: center;
+        border: 2px solid #e0f0f5;
+        transition: all 0.3s ease;
+        cursor: pointer;
+    }
+
+    .course-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+        border-color: #4ae0d0;
+    }
+
+    @media (max-width: 768px) {
+        .course-grid {
+            grid-template-columns: 1fr !important;
+        }
+    }
+</style>
 {% endblock %}

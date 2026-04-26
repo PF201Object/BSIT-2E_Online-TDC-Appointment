@@ -1,41 +1,92 @@
 {% extends "booking_step.html" %}
 {% set step = 2 %}
 {% block step_content %}
-<h2 style="color: #043b50; margin-bottom: 30px;">Your Information</h2>
+
+<h2 style="color: #043b50; margin-bottom: 15px; font-size: clamp(1.2rem, 5vw, 1.8rem);">Your Information</h2>
+<p style="color: #0f5e7a; margin-bottom: 25px; font-size: clamp(0.85rem, 3vw, 1rem);">Please confirm your details for the appointment</p>
 
 <form method="POST" action="{{ url_for('booking_vehicle') }}">
-    <div style="background: #f5fcff; border-radius: 30px; padding: 30px;">
-        <div style="margin-bottom: 20px;">
-            <label style="color: #0f5e7a; font-weight: 600; display: block; margin-bottom: 8px;">Full Name</label>
-            <input type="text" name="full_name" class="form-control" value="{{ user.full_name or user.username }}" required>
+    <div style="background: #f5fcff; border-radius: 25px; padding: clamp(15px, 4vw, 25px); margin-bottom: 25px;">
+        <div style="margin-bottom: 15px;">
+            <label style="color: #0f5e7a; font-weight: 600; display: block; margin-bottom: 8px; font-size: clamp(0.85rem, 3vw, 1rem);">Full Name *</label>
+            <input type="text" name="full_name" class="form-control" value="{{ user.full_name or user.username }}" required
+                   style="font-size: 16px; padding: clamp(10px, 3vw, 14px) clamp(12px, 4vw, 20px); width: 100%; border-radius: 50px; border: 2px solid #e0f0f5;">
         </div>
 
-        <div style="margin-bottom: 20px;">
-            <label style="color: #0f5e7a; font-weight: 600; display: block; margin-bottom: 8px;">Email Address</label>
-            <input type="email" name="email" class="form-control" value="{{ user.email or '' }}" required>
+        <div style="margin-bottom: 15px;">
+            <label style="color: #0f5e7a; font-weight: 600; display: block; margin-bottom: 8px; font-size: clamp(0.85rem, 3vw, 1rem);">Email Address *</label>
+            <input type="email" name="email" class="form-control" value="{{ user.email or '' }}" required
+                   style="font-size: 16px; padding: clamp(10px, 3vw, 14px) clamp(12px, 4vw, 20px); width: 100%; border-radius: 50px; border: 2px solid #e0f0f5;">
         </div>
 
-        <div style="margin-bottom: 20px;">
-            <label style="color: #0f5e7a; font-weight: 600; display: block; margin-bottom: 8px;">Contact Number</label>
-            <input type="text" name="contact_number" class="form-control" value="{{ user.phone or '' }}" required>
+        <div style="margin-bottom: 15px;">
+            <label style="color: #0f5e7a; font-weight: 600; display: block; margin-bottom: 8px; font-size: clamp(0.85rem, 3vw, 1rem);">Contact Number *</label>
+            <input type="tel" name="contact_number" class="form-control" value="{{ user.phone or '' }}" required
+                   style="font-size: 16px; padding: clamp(10px, 3vw, 14px) clamp(12px, 4vw, 20px); width: 100%; border-radius: 50px; border: 2px solid #e0f0f5;">
+            <small style="color: #6c757d; font-size: clamp(0.65rem, 2.5vw, 0.75rem);">Include area code if applicable</small>
         </div>
 
-        <div style="margin-bottom: 20px;">
-            <label style="color: #0f5e7a; font-weight: 600; display: block; margin-bottom: 8px;">Select Location</label>
-            <select name="location" class="form-control">
-                <option value="Tullisoy City, EcoDrive">Tullisoy City, EcoDrive</option>
-                <option value="Mingionillo City, EcoDrive">Mingionillo City, EcoDrive</option>
+        <div style="margin-bottom: 15px;">
+            <label style="color: #0f5e7a; font-weight: 600; display: block; margin-bottom: 8px; font-size: clamp(0.85rem, 3vw, 1rem);">Select Location *</label>
+            <select name="location" class="form-control" required
+                    style="font-size: 16px; padding: clamp(10px, 3vw, 14px) clamp(12px, 4vw, 20px); width: 100%; border-radius: 50px; border: 2px solid #e0f0f5;">
+                <option value="Talisay City, EcoDrive">Talisay City, EcoDrive</option>
+                <option value="Minglanilla City, EcoDrive">Minglanilla City, EcoDrive</option>
             </select>
         </div>
     </div>
 
-    <div style="display: flex; justify-content: space-between; margin-top: 30px;">
-        <a href="{{ url_for('booking') }}" class="btn-secondary">
+    <div style="background: #e3f7fb; border-radius: 15px; padding: clamp(12px, 4vw, 20px); margin-bottom: 25px;">
+        <h4 style="color: #043b50; margin-bottom: 10px; font-size: clamp(0.9rem, 4vw, 1.1rem);">
+            <i class="fas fa-calendar-check"></i> Appointment Summary
+        </h4>
+        <div style="display: flex; flex-wrap: wrap; gap: 15px;">
+            <div>
+                <i class="fas fa-calendar" style="color: #0f5e7a;"></i>
+                <strong>Date:</strong>
+                <span id="summaryDate" style="color: #0f5e7a;">{{ session.get('booking_date', 'Not selected') }}</span>
+            </div>
+            <div>
+                <i class="fas fa-clock" style="color: #0f5e7a;"></i>
+                <strong>Duration:</strong>
+                <span>Full Day (8:00 AM - 5:00 PM)</span>
+            </div>
+        </div>
+    </div>
+
+    <div style="display: flex; flex-direction: row; justify-content: space-between; margin-top: 30px; gap: 15px; flex-wrap: wrap;">
+        <a href="{{ url_for('booking') }}" class="btn-secondary" style="text-align: center; flex: 1; min-width: 120px; padding: 12px; border-radius: 50px; text-decoration: none;">
             <i class="fas fa-arrow-left"></i> Back
         </a>
-        <button type="submit" class="btn-primary">
-            Continue to Vehicle <i class="fas fa-arrow-right"></i>
+        <button type="submit" class="btn-primary" style="flex: 1; min-width: 120px; padding: 12px; border-radius: 50px;">
+            Continue <i class="fas fa-arrow-right"></i>
         </button>
     </div>
 </form>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const summaryDate = document.getElementById('summaryDate');
+        const selectedDate = '{{ session.get("booking_date", "") }}';
+        if (selectedDate && selectedDate !== 'Not selected') {
+            const dateParts = selectedDate.split('-');
+            if (dateParts.length === 3) {
+                const date = new Date(dateParts[0], dateParts[1]-1, dateParts[2]);
+                const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+                summaryDate.innerHTML = `<strong style="color:#043b50">${date.toLocaleDateString('en-US', options)}</strong>`;
+            }
+        }
+    });
+</script>
+
+<style>
+    @media (max-width: 768px) {
+        .btn-secondary, .btn-primary {
+            width: 100% !important;
+        }
+        input, select {
+            font-size: 16px !important;
+        }
+    }
+</style>
 {% endblock %}

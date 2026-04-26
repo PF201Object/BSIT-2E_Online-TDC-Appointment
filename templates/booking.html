@@ -2,127 +2,115 @@
 {% set step = 1 %}
 {% block step_content %}
 
-<form method="POST" action="{{ url_for('booking_information') }}">
-    <h2 style="color: #043b50; margin-bottom: 20px;">Select Appointment Date</h2>
-    <p style="color: #0f5e7a; margin-bottom: 30px;">Choose from available dates (tomorrow onwards)</p>
+<form method="POST" action="{{ url_for('booking_information') }}" style="height: 100%; display: flex; flex-direction: column;">
+    <div style="flex: 1;">
+        <h2 style="color: #043b50; margin-bottom: 20px; font-size: clamp(1.2rem, 5vw, 1.8rem);">Select Appointment Date</h2>
+        <p style="color: #0f5e7a; margin-bottom: 30px; font-size: clamp(0.85rem, 3vw, 1rem);">
+            <i class="fas fa-calendar-alt"></i> Choose from available dates (Monday to Friday)
+        </p>
 
-    <!-- Calendar Grid -->
-    <div style="background: #f5fcff; border-radius: 30px; padding: 25px; margin-bottom: 30px;">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-            <h3 style="color: #043b50;">Available Dates</h3>
-            <div style="color: #0f5e7a;">
-                <i class="fas fa-info-circle"></i> Maximum 20 slots per day
-            </div>
-        </div>
-
-        <div class="schedule-grid" style="grid-template-columns: repeat(4, 1fr);">
-            {% for date in available_dates %}
-            <div class="schedule-card {% if date.slots == 0 %}disabled{% endif %}"
-                 onclick="selectDate('{{ date.date }}', '{{ date.full }}', this)"
-                 style="{% if date.slots == 0 %}opacity: 0.5; pointer-events: none; background: #f0f0f0;{% endif %}">
-                <div style="font-size: 1.5rem; font-weight: 700; color: #043b50;">{{ date.day_num }}</div>
-                <div style="font-size: 1rem; color: #0f5e7a;">{{ date.month }}</div>
-                <div style="font-weight: 600; margin: 10px 0;">{{ date.day }}</div>
-                <div class="schedule-slots" style="color: {% if date.slots < 5 %}#dc3545{% elif date.slots < 10 %}#ffc107{% else %}#28a745{% endif %};">
-                    {{ date.slots }} slots left
+        <!-- Calendar Grid -->
+        <div style="background: #f5fcff; border-radius: 25px; padding: clamp(15px, 4vw, 25px); margin-bottom: 30px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 10px;">
+                <h3 style="color: #043b50; font-size: clamp(0.9rem, 4vw, 1.2rem);">Available Dates</h3>
+                <div style="color: #0f5e7a; font-size: clamp(0.65rem, 3vw, 0.85rem);">
+                    <i class="fas fa-info-circle"></i> Max 20 slots/day | Weekdays Only
                 </div>
             </div>
-            {% endfor %}
+
+            {% if available_dates %}
+            <div class="schedule-grid">
+                {% for date in available_dates %}
+                <div class="schedule-card {% if not date.is_available %}disabled{% endif %}"
+                     onclick="selectDate('{{ date.date }}', '{{ date.full }}', this, {{ date.slots }})"
+                     data-slots="{{ date.slots }}"
+                     style="{% if not date.is_available %}opacity: 0.5; pointer-events: none; background: #f0f0f0;{% endif %} cursor: pointer;">
+                    <div style="font-size: clamp(1rem, 4vw, 1.5rem); font-weight: 700; color: #043b50;">{{ date.day_num }}</div>
+                    <div style="font-size: clamp(0.7rem, 3vw, 0.9rem); font-weight: 600; color: #0f5e7a;">{{ date.month }}</div>
+                    <div style="font-size: clamp(0.65rem, 2.5vw, 0.85rem); font-weight: 500; margin: 5px 0;">{{ date.day[:3] }}</div>
+                    <div class="schedule-slots" style="color: {% if date.slots == 0 %}#dc3545{% elif date.slots <= 5 %}#ffc107{% else %}#28a745{% endif %}; font-size: clamp(0.65rem, 2.5vw, 0.85rem); font-weight: 600; margin-top: 8px;">
+                        {% if date.slots == 0 %}
+                            ❌ Full
+                        {% else %}
+                            ✅ {{ date.slots }} left
+                        {% endif %}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div style="text-align: center; padding: clamp(30px, 10vw, 60px);">
+                <i class="fas fa-calendar-times" style="font-size: clamp(2rem, 8vw, 3rem); color: #cce7f0;"></i>
+                <p style="margin-top: 15px; font-size: clamp(0.85rem, 3vw, 1rem);">No available dates found.</p>
+            </div>
+            {% endif %}
         </div>
+
+        <!-- Selected Date Summary -->
+        <div id="selectedSummary" style="background: #e3f7fb; border-radius: 15px; padding: clamp(12px, 4vw, 20px); margin-bottom: 30px; display: none;">
+            <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+                <i class="fas fa-check-circle" style="color: #28a745; font-size: clamp(1rem, 4vw, 1.2rem);"></i>
+                <span style="font-weight: 600; font-size: clamp(0.8rem, 3vw, 0.95rem);">Selected Date:</span>
+                <span id="selectedDateDisplay" style="font-weight: 700; color: #043b50; font-size: clamp(0.8rem, 3vw, 0.95rem);"></span>
+                <span id="selectedSlotsDisplay" style="color: #0f5e7a; font-size: clamp(0.7rem, 3vw, 0.85rem);"></span>
+            </div>
+        </div>
+
+        <input type="hidden" name="preferred_date" id="selected_date" required>
+        <input type="hidden" name="preferred_time" id="selected_time" value="8:00 AM - 5:00 PM (Full Day)">
     </div>
 
-    <!-- Time Selection -->
-    <div style="background: #f5fcff; border-radius: 30px; padding: 25px; margin-bottom: 30px;">
-        <h3 style="color: #043b50; margin-bottom: 20px;">Select Time</h3>
-        <p style="color: #0f5e7a; margin-bottom: 15px;">Fixed schedule: 8:00 AM - 5:00 PM</p>
-
-        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px;">
-            <div class="payment-option" onclick="selectTime('8:00 - 9:00 AM', this)">
-                <i class="far fa-clock"></i> 8:00 - 9:00 AM
-            </div>
-            <div class="payment-option" onclick="selectTime('9:00 - 10:00 AM', this)">
-                <i class="far fa-clock"></i> 9:00 - 10:00 AM
-            </div>
-            <div class="payment-option" onclick="selectTime('10:00 - 11:00 AM', this)">
-                <i class="far fa-clock"></i> 10:00 - 11:00 AM
-            </div>
-            <div class="payment-option" onclick="selectTime('11:00 AM - 12:00 PM', this)">
-                <i class="far fa-clock"></i> 11:00 AM - 12:00 PM
-            </div>
-            <div class="payment-option" onclick="selectTime('1:00 - 2:00 PM', this)">
-                <i class="far fa-clock"></i> 1:00 - 2:00 PM
-            </div>
-            <div class="payment-option" onclick="selectTime('2:00 - 3:00 PM', this)">
-                <i class="far fa-clock"></i> 2:00 - 3:00 PM
-            </div>
-            <div class="payment-option" onclick="selectTime('3:00 - 4:00 PM', this)">
-                <i class="far fa-clock"></i> 3:00 - 4:00 PM
-            </div>
-            <div class="payment-option" onclick="selectTime('4:00 - 5:00 PM', this)">
-                <i class="far fa-clock"></i> 4:00 - 5:00 PM
-            </div>
-        </div>
-    </div>
-
-    <!-- Hidden inputs -->
-    <input type="hidden" name="preferred_date" id="selected_date" required>
-    <input type="hidden" name="preferred_time" id="selected_time" required>
-
-    <!-- Continue Button -->
-    <div style="display: flex; justify-content: flex-end; margin-top: 30px;">
-        <button type="submit" class="btn-primary" id="continueBtn" style="padding: 16px 60px;" disabled>
-            Continue to Information <i class="fas fa-arrow-right"></i>
+    <!-- Continue Button - Sticky on mobile -->
+    <div class="button-container" style="margin-top: 20px; padding: 15px 0; position: sticky; bottom: 0; background: white; border-radius: 15px;">
+        <button type="submit" class="btn-primary" id="continueBtn" style="width: 100%; padding: 16px; font-size: 1.1rem; font-weight: 700;" disabled>
+            Continue <i class="fas fa-arrow-right"></i>
         </button>
     </div>
 </form>
 
 <script>
     let selectedDateCard = null;
-    let selectedTimeCard = null;
+    let selectedDateValue = null;
 
-    function selectDate(date, fullDate, element) {
+    function selectDate(date, fullDate, element, slots) {
         if (selectedDateCard) {
             selectedDateCard.classList.remove('selected');
         }
         element.classList.add('selected');
         selectedDateCard = element;
+        selectedDateValue = date;
         document.getElementById('selected_date').value = date;
 
-        // Show preview in summary
-        const summaryBox = document.querySelector('.summary-preview');
-        if (summaryBox) {
-            summaryBox.innerHTML = `<i class="far fa-calendar"></i> ${fullDate}`;
-        }
+        const summaryBox = document.getElementById('selectedSummary');
+        document.getElementById('selectedDateDisplay').innerHTML = fullDate;
+        document.getElementById('selectedSlotsDisplay').innerHTML = `(${slots} slots available)`;
+        summaryBox.style.display = 'block';
 
-        checkContinueButton();
-    }
-
-    function selectTime(time, element) {
-        if (selectedTimeCard) {
-            selectedTimeCard.classList.remove('selected');
-        }
-        element.classList.add('selected');
-        selectedTimeCard = element;
-        document.getElementById('selected_time').value = time;
-        checkContinueButton();
-    }
-
-    function checkContinueButton() {
         const btn = document.getElementById('continueBtn');
-        if (selectedDateCard && selectedTimeCard) {
-            btn.disabled = false;
-            btn.style.opacity = '1';
-        } else {
-            btn.disabled = true;
-            btn.style.opacity = '0.5';
+        btn.disabled = false;
+        btn.style.opacity = '1';
+        btn.style.background = 'linear-gradient(135deg, #28a745, #20c997)';
+
+        if (window.innerWidth <= 768) {
+            summaryBox.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
         }
     }
 </script>
 
 <style>
+    .schedule-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
+        gap: 12px;
+    }
     .schedule-card {
         cursor: pointer;
         transition: all 0.3s ease;
+        text-align: center;
+        padding: clamp(8px, 3vw, 12px);
+        background: white;
+        border-radius: 15px;
+        border: 2px solid #e0f0f5;
     }
     .schedule-card.selected {
         border-color: #0f5e7a;
@@ -132,14 +120,44 @@
     .schedule-card.disabled {
         cursor: not-allowed;
         background: #f8f9fa;
+        opacity: 0.6;
     }
-    .payment-option {
-        cursor: pointer;
-        text-align: center;
+
+    /* Mobile specific styles */
+    @media (max-width: 768px) {
+        .schedule-grid {
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+        }
+        .schedule-card {
+            padding: 8px 5px;
+        }
+
+        .button-container {
+            position: sticky !important;
+            bottom: 0 !important;
+            background: white !important;
+            z-index: 100 !important;
+            padding: 12px !important;
+            margin-top: 10px !important;
+            box-shadow: 0 -5px 15px rgba(0,0,0,0.1);
+        }
+
+        .btn-primary {
+            width: 100% !important;
+            padding: 14px !important;
+            font-size: 1rem !important;
+        }
     }
-    .payment-option.selected {
-        border-color: #0f5e7a;
-        background: #e3f7fb;
+
+    @media (max-width: 480px) {
+        .schedule-grid {
+            grid-template-columns: repeat(3, 1fr);
+            gap: 6px;
+        }
+        .schedule-card {
+            padding: 6px 3px;
+        }
     }
 </style>
 {% endblock %}

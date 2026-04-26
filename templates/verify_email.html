@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+{% block title %}Verify Email - EcoDrive Theory{% endblock %}
+
+{% block content %}
+<div class="glass-panel" style="max-width: 500px; margin: 20px auto;">
+    <h2 class="form-title">🔐 Email Verification</h2>
+    <p style="text-align: center; color: #0f5e7a; margin-bottom: 25px;">
+        A 6-digit verification code has been sent to:<br>
+        <strong>{{ email }}</strong>
+    </p>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category }}" style="padding: 12px; border-radius: 10px; margin-bottom: 15px;
+                    {% if category == 'danger' %}background: #f8d7da; color: #721c24;
+                    {% elif category == 'success' %}background: #d4edda; color: #155724;
+                    {% else %}background: #fff3cd; color: #856404;{% endif %}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <form method="POST">
+        <div class="form-group">
+            <label>Verification Code</label>
+            <input type="text" name="verification_code" class="form-control"
+                   placeholder="Enter 6-digit code" maxlength="6" required autofocus
+                   style="text-align: center; font-size: 24px; letter-spacing: 5px;">
+        </div>
+
+        <button type="submit" class="btn-primary">VERIFY EMAIL</button>
+    </form>
+
+    <div style="text-align: center; margin-top: 20px;">
+        <p>Didn't receive the code?</p>
+        <form method="POST" action="{{ url_for('resend_code') }}" style="display: inline;">
+            <button type="submit" style="background: none; border: none; color: #0f5e7a; text-decoration: underline; cursor: pointer;">
+                Resend Code
+            </button>
+        </form>
+    </div>
+</div>
+
+<style>
+    .form-group {
+        margin-bottom: 20px;
+    }
+    .form-control {
+        width: 100%;
+        padding: 12px 15px;
+        border: 2px solid #e0e0e0;
+        border-radius: 10px;
+        font-size: 14px;
+        transition: all 0.3s;
+    }
+    .form-control:focus {
+        outline: none;
+        border-color: #0f5e7a;
+        box-shadow: 0 0 0 3px rgba(15,94,122,0.1);
+    }
+    .btn-primary {
+        width: 100%;
+        padding: 12px;
+        background: linear-gradient(135deg, #0f5e7a, #1a4b63);
+        color: white;
+        border: none;
+        border-radius: 10px;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: transform 0.2s;
+    }
+    .btn-primary:hover {
+        transform: translateY(-2px);
+    }
+</style>
+{% endblock %}

@@ -1,0 +1,215 @@
+{% extends "base.html" %}
+{% block title %}Payment Receipt - EcoDrive Theory{% endblock %}
+
+{% block content %}
+<div class="glass-panel" id="receiptContent">
+    <!-- Receipt Container - Optimized for 1 page -->
+    <div style="background: white; border-radius: 20px; padding: 20px; max-width: 800px; margin: 0 auto;">
+
+        <!-- Receipt Header -->
+        <div style="text-align: center; margin-bottom: 20px;">
+            <div style="background: #0f5e7a; width: 60px; height: 60px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; margin-bottom: 10px;">
+                <i class="fas fa-check-circle" style="font-size: 2rem; color: #4ae0d0;"></i>
+            </div>
+            <h1 style="color: #043b50; font-size: 1.5rem; margin: 5px 0;">Payment Successful!</h1>
+            <p style="color: #0f5e7a; font-size: 0.85rem;">Your booking has been confirmed</p>
+        </div>
+
+        <!-- EcoDrive Header -->
+        <div style="text-align: center; border-bottom: 2px solid #cce7f0; padding-bottom: 15px; margin-bottom: 15px;">
+            <i class="fas fa-car" style="font-size: 1.8rem; color: #0f5e7a;"></i>
+            <h2 style="color: #043b50; margin: 5px 0; font-size: 1.3rem;">EcoDrive Theory</h2>
+            <p style="color: #6c757d; font-size: 0.75rem;">Official Payment Receipt</p>
+        </div>
+
+        <!-- Two Column Layout for Receipt Details -->
+        <div style="display: flex; flex-wrap: wrap; gap: 15px; margin-bottom: 15px;">
+            <!-- Left Column -->
+            <div style="flex: 1; min-width: 200px;">
+                <div style="margin-bottom: 10px;">
+                    <div style="color: #6c757d; font-size: 0.7rem;">REFERENCE NUMBER</div>
+                    <div style="font-weight: 600; color: #043b50; font-size: 0.85rem;">{{ appointment.reference_number }}</div>
+                </div>
+                <div style="margin-bottom: 10px;">
+                    <div style="color: #6c757d; font-size: 0.7rem;">TRANSACTION ID</div>
+                    <div style="font-weight: 600; color: #043b50; font-size: 0.85rem;">{{ payment.transaction_id }}</div>
+                </div>
+                <div style="margin-bottom: 10px;">
+                    <div style="color: #6c757d; font-size: 0.7rem;">PAYMENT DATE</div>
+                    <div style="font-weight: 600; color: #043b50; font-size: 0.85rem;">{{ payment.payment_date.strftime('%B %d, %Y at %I:%M %p') if payment.payment_date else datetime.now().strftime('%B %d, %Y at %I:%M %p') }}</div>
+                </div>
+                <div style="margin-bottom: 10px;">
+                    <div style="color: #6c757d; font-size: 0.7rem;">PAYMENT METHOD</div>
+                    <div style="font-weight: 600; color: #043b50; font-size: 0.85rem;">{{ payment.payment_method }}</div>
+                </div>
+            </div>
+
+            <!-- Right Column -->
+            <div style="flex: 1; min-width: 200px;">
+                <div style="margin-bottom: 10px;">
+                    <div style="color: #6c757d; font-size: 0.7rem;">BOOKING DATE</div>
+                    <div style="font-weight: 600; color: #043b50; font-size: 0.85rem;">{{ appointment.booking_date.strftime('%B %d, %Y') if appointment.booking_date else 'N/A' }}</div>
+                </div>
+                <div style="margin-bottom: 10px;">
+                    <div style="color: #6c757d; font-size: 0.7rem;">TIME</div>
+                    <div style="font-weight: 600; color: #043b50; font-size: 0.85rem;">Full Day (8:00 AM - 5:00 PM)</div>
+                </div>
+                <div style="margin-bottom: 10px;">
+                    <div style="color: #6c757d; font-size: 0.7rem;">LOCATION</div>
+                    <div style="font-weight: 600; color: #043b50; font-size: 0.85rem;">{{ appointment.location or 'EcoDrive Main Center' }}</div>
+                </div>
+                <div style="margin-bottom: 10px;">
+                    <div style="color: #6c757d; font-size: 0.7rem;">STATUS</div>
+                    <div>
+                        <span style="background: {% if appointment.status == 'Paid' %}#28a745{% elif appointment.status == 'Confirmed' %}#17a2b8{% else %}#ffc107{% endif %}; color: white; padding: 2px 10px; border-radius: 15px; font-size: 0.75rem;">
+                            {% if appointment.status == 'Paid' %}Paid{% elif appointment.status == 'Confirmed' %}Confirmed{% else %}{{ appointment.status }}{% endif %}
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Customer Information - Compact -->
+        <div style="background: #f5fcff; border-radius: 12px; padding: 12px; margin-bottom: 15px;">
+            <h3 style="color: #043b50; margin-bottom: 8px; font-size: 0.9rem;">
+                <i class="fas fa-user"></i> Customer Information
+            </h3>
+            <div style="display: flex; flex-wrap: wrap; gap: 10px; font-size: 0.8rem;">
+                <div style="flex: 1;"><strong>Name:</strong> {{ appointment.full_name }}</div>
+                <div style="flex: 1;"><strong>Email:</strong> {{ appointment.email }}</div>
+                <div style="flex: 1;"><strong>Contact:</strong> {{ appointment.contact_number }}</div>
+            </div>
+        </div>
+
+        <!-- Vehicle Information -->
+        <div style="background: #e3f7fb; border-radius: 12px; padding: 12px; margin-bottom: 15px;">
+            <h3 style="color: #043b50; margin-bottom: 8px; font-size: 0.9rem;">
+                <i class="fas fa-car"></i> Vehicle Information
+            </h3>
+            <div style="font-size: 0.8rem;">
+                <strong>Vehicle Type:</strong>
+                {% set vehicle_names = {'2w': 'Motorcycle', '3w': 'Tricycle', '4w': 'Car', '6w': 'Truck/Bus'} %}
+                {{ vehicle_names.get(session.get('booking_vehicle', '4w'), 'Car') }}
+            </div>
+        </div>
+
+        <!-- Amount Summary - Compact -->
+        <div style="background: #0f5e7a; border-radius: 12px; padding: 12px; margin-bottom: 15px; text-align: center;">
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;">
+                <span style="color: white; font-size: 0.9rem;">Total Amount Paid:</span>
+                <span style="color: #4ae0d0; font-size: 1.5rem; font-weight: 700;">₱{{ "%.2f"|format(payment.amount) }}</span>
+            </div>
+        </div>
+
+        <!-- Thank You Message -->
+        <div style="text-align: center; padding-top: 10px; border-top: 1px solid #cce7f0;">
+            <p style="color: #0f5e7a; margin-bottom: 5px; font-size: 0.8rem;">Thank you for choosing EcoDrive Theory!</p>
+            <p style="color: #6c757d; font-size: 0.7rem;">Please present this receipt on your appointment date.</p>
+        </div>
+
+        <!-- Footer Note -->
+        <div style="text-align: center; margin-top: 10px; padding-top: 8px; border-top: 1px dashed #cce7f0;">
+            <p style="color: #999; font-size: 0.6rem;">This is a computer-generated receipt. No signature required.</p>
+        </div>
+    </div>
+
+    <!-- Action Buttons -->
+    <div style="display: flex; justify-content: center; gap: 15px; margin-top: 20px; flex-wrap: wrap;">
+        <button onclick="window.print()" class="btn-primary" style="background: #28a745; padding: 10px 24px;">
+            <i class="fas fa-print"></i> Print Receipt
+        </button>
+        <a href="{{ url_for('dashboard') }}" class="btn-secondary" style="padding: 10px 24px;">
+            <i class="fas fa-home"></i> Dashboard
+        </a>
+    </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+<script>
+    function downloadPDF() {
+        const element = document.getElementById('receiptContent');
+        const opt = {
+            margin: [0.3, 0.3, 0.3, 0.3],
+            filename: 'EcoDrive_Receipt_{{ appointment.reference_number }}.pdf',
+            image: { type: 'jpeg', quality: 0.95 },
+            html2canvas: { scale: 1.5, letterRendering: true },
+            jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' }
+        };
+        html2pdf().set(opt).from(element).save();
+    }
+</script>
+
+<style>
+    /* Print Styles - Ensures 1 page only */
+    @media print {
+        /* Hide all navigation and buttons */
+        .navbar, .footer, .btn-primary, .btn-secondary, .auth-buttons,
+        .container > :not(.glass-panel), .btn-primary, .btn-secondary {
+            display: none !important;
+        }
+
+        /* Reset container for print */
+        .glass-panel {
+            margin: 0 !important;
+            padding: 0 !important;
+            background: white !important;
+            box-shadow: none !important;
+        }
+
+        /* Receipt content takes full width */
+        #receiptContent {
+            margin: 0 !important;
+            padding: 10px !important;
+            width: 100% !important;
+        }
+
+        /* Ensure everything fits on one page */
+        #receiptContent > div {
+            max-width: 100% !important;
+            padding: 10px !important;
+        }
+
+        /* Compact everything for print */
+        body {
+            background: white !important;
+        }
+
+        /* Force page break avoidance */
+        div, section, .glass-panel, #receiptContent {
+            page-break-inside: avoid;
+            break-inside: avoid;
+        }
+
+        /* Smaller margins for print */
+        @page {
+            margin: 0.5cm;
+            size: portrait;
+        }
+    }
+
+    /* Screen styles - Mobile responsive */
+    @media (max-width: 768px) {
+        .btn-primary, .btn-secondary {
+            width: 100% !important;
+            text-align: center !important;
+            margin: 5px 0;
+        }
+
+        .glass-panel {
+            padding: 15px !important;
+        }
+
+        #receiptContent > div {
+            padding: 15px !important;
+        }
+    }
+
+    /* Ensure PDF looks identical to print */
+    @media print and (max-width: 768px) {
+        .btn-primary, .btn-secondary {
+            display: none !important;
+        }
+    }
+</style>
+{% endblock %}

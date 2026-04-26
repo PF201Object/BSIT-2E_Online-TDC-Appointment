@@ -3,58 +3,58 @@
 
 {% block content %}
 <div class="glass-panel">
-    <!-- About Us & Landing Hook -->
-    <div style="display: flex; gap: 40px; align-items: center; margin-bottom: 40px;">
-        <div style="flex: 1;">
-            <h1 style="font-size: 3rem; color: #043b50; line-height: 1.2;">About Us:<br>The Future of Mobility™</h1>
-            <p style="font-size: 2rem; font-weight: 300; color: #0f5e7a; margin: 10px 0;">Unlock your freedom.</p>
-            <p style="font-size: 1.2rem; color: #2b5f7a; margin: 20px 0;">Your journey doesn't start at the steering wheel; it starts with the right knowledge.</p>
-            <a href="{{ url_for('about') }}" class="btn-primary" style="width: auto; padding: 16px 50px;">LEARN MORE</a>
+    <!-- About Us & Landing Hook - Responsive -->
+    <div style="display: flex; flex-direction: column; gap: 30px; margin-bottom: 40px;">
+        <div style="flex: 1; text-align: center;">
+            <h1 style="font-size: clamp(1.8rem, 5vw, 3rem); color: #043b50; line-height: 1.2;"><br>The Future of Mobility™</h1>
+            <p style="font-size: clamp(1.2rem, 4vw, 2rem); font-weight: 300; color: #0f5e7a; margin: 10px 0;">Unlock your freedom.</p>
+            <p style="font-size: clamp(0.9rem, 3vw, 1.2rem); color: #2b5f7a; margin: 20px 0;">Your journey doesn't start at the steering wheel; it starts with the right knowledge.</p>
+            <a href="{{ url_for('about') }}" class="btn-primary" style="width: auto; padding: 14px 40px; display: inline-block;">LEARN MORE</a>
         </div>
-        <div style="background: rgba(74, 224, 208, 0.2); border-radius: 100px; padding: 20px 40px; display: flex; align-items: center; gap: 20px;">
-            <i class="fas fa-graduation-cap" style="font-size: 3rem; color: #0f5e7a;"></i>
-            <span style="font-weight: 600; color: #043b50;">student with certificate</span>
-            <i class="fas fa-certificate" style="font-size: 2rem; color: gold;"></i>
+        <div style="background: rgba(74, 224, 208, 0.2); border-radius: 50px; padding: 15px 20px; display: flex; align-items: center; justify-content: center; gap: 15px; flex-wrap: wrap;">
+            <i class="fas fa-graduation-cap" style="font-size: clamp(1.5rem, 4vw, 3rem); color: #0f5e7a;"></i>
+            <span style="font-weight: 600; color: #043b50; font-size: clamp(0.8rem, 3vw, 1rem);">student with certificate</span>
+            <i class="fas fa-certificate" style="font-size: clamp(1.2rem, 3vw, 2rem); color: gold;"></i>
         </div>
     </div>
 
     <!-- Why TDC Online Benefits -->
     <div class="benefit-grid">
         <div class="benefit-card">
-            <i class="fas fa-shield-alt" style="font-size: 2.5rem; color: #0f5e7a; margin-bottom: 15px;"></i>
+            <i class="fas fa-shield-alt" style="font-size: 2rem; color: #0f5e7a; margin-bottom: 15px;"></i>
             <h4>Trust & Compliance</h4>
             <p>LTO-aligned curriculum, valid certificates honored at all LTO centers.</p>
         </div>
         <div class="benefit-card">
-            <i class="fas fa-clock" style="font-size: 2.5rem; color: #0f5e7a; margin-bottom: 15px;"></i>
+            <i class="fas fa-clock" style="font-size: 2rem; color: #0f5e7a; margin-bottom: 15px;"></i>
             <h4>24/7 Booking</h4>
             <p>Book anytime, anywhere. No more office hours restriction.</p>
         </div>
         <div class="benefit-card">
-            <i class="fas fa-sync-alt" style="font-size: 2.5rem; color: #0f5e7a; margin-bottom: 15px;"></i>
+            <i class="fas fa-sync-alt" style="font-size: 2rem; color: #0f5e7a; margin-bottom: 15px;"></i>
             <h4>Updated Curriculum</h4>
             <p>Latest 2026 traffic regulations and road signs included.</p>
         </div>
     </div>
 
-    <!-- Classroom Illustration -->
-    <div style="background: #e3f7fb; border-radius: 60px; padding: 25px 35px; display: flex; align-items: center; justify-content: space-between; margin-top: 30px;">
-        <div style="display: flex; align-items: center; gap: 25px;">
-            <i class="fas fa-chalkboard-teacher" style="font-size: 3rem; color: #0f5e7a;"></i>
-            <div>
-                <span style="font-weight: 600; color: #043b50;">teacher pointing:</span>
-                <i class="fas fa-stop-circle" style="color: #dc3545; margin-left: 10px;"></i>
+    <!-- Classroom Illustration - Responsive -->
+    <div style="background: #e3f7fb; border-radius: 40px; padding: 20px; display: flex; flex-direction: column; gap: 20px; margin-top: 30px;">
+        <div style="display: flex; align-items: center; justify-content: center; gap: 15px; flex-wrap: wrap;">
+            <i class="fas fa-chalkboard-teacher" style="font-size: clamp(1.5rem, 4vw, 3rem); color: #0f5e7a;"></i>
+            <span style="font-weight: 600; color: #043b50;">teacher pointing:</span>
+            <div style="display: flex; gap: 10px;">
+                <i class="fas fa-stop-circle" style="color: #dc3545;"></i>
                 <i class="fas fa-ban" style="color: #ffc107;"></i>
                 <i class="fas fa-arrow-right" style="color: #28a745;"></i>
             </div>
-            <div style="display: flex; gap: 10px;">
-                <i class="fas fa-user-graduate"></i>
-                <i class="fas fa-user-graduate"></i>
-                <i class="fas fa-user-graduate"></i>
-                <i class="fas fa-user-graduate"></i>
-            </div>
         </div>
-        <a href="{{ url_for('booking') if session.user_id else url_for('login') }}" class="btn-primary" style="width: auto;">BOOK APPOINTMENT</a>
+        <div style="display: flex; justify-content: center; gap: 10px; flex-wrap: wrap;">
+            <i class="fas fa-user-graduate"></i>
+            <i class="fas fa-user-graduate"></i>
+            <i class="fas fa-user-graduate"></i>
+            <i class="fas fa-user-graduate"></i>
+        </div>
+        <a href="{{ url_for('booking') if session.user_id else url_for('login') }}" class="btn-primary" style="text-align: center;">BOOK APPOINTMENT</a>
     </div>
 </div>
 {% endblock %}

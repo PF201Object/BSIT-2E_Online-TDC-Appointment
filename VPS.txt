@@ -1,0 +1,22 @@
+scp root@172.104.174.105:/root/ecodrive/BSIT-2E_Online-TDC-Appointment/instance/RonGwafo.db "C:\Users\Copernicus Pepito\OneDrive\Desktop\RonGwafo.db"
+
+Get database From VPS
+
+scp -r root@172.104.174.105:/root/ecodrive/BSIT-2E_Online-TDC-Appointment "C:\Users\Copernicus Pepito\OneDrive\Desktop\"
+(Get Files from the VPS)
+
+scp -r "C:\Users\Copernicus Pepito\OneDrive\Desktop\BSIT-2E_Online-TDC-Appointment/templates" root@172.104.174.105:/root/ecodrive/BSIT-2E_Online-TDC-Appointment
+(Update Files)
+
+cd /root/ecodrive/BSIT-2E_Online-TDC-Appointment
+
+scp "C:\Users\Copernicus Pepito\OneDrive\Desktop\RonGwafo.db" root@172.104.174.105:/root/ecodrive/BSIT-2E_Online-TDC-Appointment/
+(Update Database)
+
+cd /root/ecodrive/BSIT-2E_Online-TDC-Appointment && source venv/bin/activate && python3 app.py
+
+systemctl status ecodrive
+
+systemctl stop ecodrive
+
+systemctl start ecodrive
