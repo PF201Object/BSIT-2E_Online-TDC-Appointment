@@ -1,0 +1,139 @@
+{% extends "base.html" %}
+{% block title %}PDC Booking Confirmation - EcoDrive Theory{% endblock %}
+
+{% block content %}
+<div class="glass-panel" style="max-width: 800px; margin: 20px auto; padding: clamp(15px, 5vw, 30px);">
+    <div style="text-align: center; margin-bottom: 30px;">
+        <div style="background: #28a745; width: clamp(60px, 15vw, 80px); height: clamp(60px, 15vw, 80px); border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; margin-bottom: 20px;">
+            <i class="fas fa-check" style="font-size: clamp(30px, 8vw, 40px); color: white;"></i>
+        </div>
+        <h1 style="color: #043b50; font-size: clamp(1.3rem, 5vw, 1.8rem);">PDC Booking Confirmed! 🎉</h1>
+        <p style="color: #0f5e7a; font-size: clamp(0.85rem, 4vw, 1rem);">Your Practical Driving Course has been successfully booked.</p>
+    </div>
+
+    <div style="background: white; border-radius: 20px; padding: clamp(15px, 4vw, 25px); margin-bottom: 25px; border: 1px solid #b3f0f0;">
+        <h2 style="color: #043b50; margin-bottom: 20px; font-size: clamp(1.1rem, 4.5vw, 1.3rem);"><i class="fas fa-receipt"></i> Booking Details</h2>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
+            <div>
+                <p style="color: #6c757d; font-size: clamp(0.65rem, 3vw, 0.75rem); margin-bottom: 5px;">REFERENCE NUMBER</p>
+                <p style="font-weight: 600; font-size: clamp(0.8rem, 3.5vw, 1rem); word-break: break-all;">{{ booking.reference_number }}</p>
+            </div>
+            <div>
+                <p style="color: #6c757d; font-size: clamp(0.65rem, 3vw, 0.75rem); margin-bottom: 5px;">TRANSACTION ID</p>
+                <p style="font-weight: 600; font-size: clamp(0.8rem, 3.5vw, 1rem); word-break: break-all;">{{ booking.transaction_id }}</p>
+            </div>
+            <div>
+                <p style="color: #6c757d; font-size: clamp(0.65rem, 3vw, 0.75rem); margin-bottom: 5px;">BOOKING DATE</p>
+                <p style="font-weight: 600; font-size: clamp(0.8rem, 3.5vw, 1rem);">{{ booking.schedule_date }}</p>
+            </div>
+        </div>
+
+        <div style="border-top: 1px solid #cce7f0; margin: 15px 0;"></div>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
+            <div>
+                <p style="color: #6c757d; font-size: clamp(0.65rem, 3vw, 0.75rem); margin-bottom: 5px;">VEHICLE TYPE</p>
+                <p style="font-weight: 600; font-size: clamp(0.8rem, 3.5vw, 1rem);">{{ booking.vehicle_name }}</p>
+            </div>
+            <div>
+                <p style="color: #6c757d; font-size: clamp(0.65rem, 3vw, 0.75rem); margin-bottom: 5px;">AMOUNT PAID</p>
+                <p style="font-weight: 700; color: #28a745; font-size: clamp(1rem, 4.5vw, 1.2rem);">₱{{ "%.2f"|format(booking.amount) }}</p>
+            </div>
+            <div>
+                <p style="color: #6c757d; font-size: clamp(0.65rem, 3vw, 0.75rem); margin-bottom: 5px;">DURATION</p>
+                <p style="font-weight: 600; font-size: clamp(0.8rem, 3.5vw, 1rem);">8 hours (Full Day)</p>
+            </div>
+        </div>
+
+        <div style="border-top: 1px solid #cce7f0; margin: 15px 0;"></div>
+
+        <div>
+            <p style="color: #6c757d; font-size: clamp(0.65rem, 3vw, 0.75rem); margin-bottom: 5px;">SCHEDULE DETAILS</p>
+            <p style="font-size: clamp(0.75rem, 3vw, 0.85rem);"><i class="fas fa-clock"></i> Time: 8:00 AM - 5:00 PM</p>
+            <p style="font-size: clamp(0.75rem, 3vw, 0.85rem);"><i class="fas fa-map-marker-alt"></i> Location: EcoDrive Main Center</p>
+            <p style="font-size: clamp(0.75rem, 3vw, 0.85rem);"><i class="fas fa-chalkboard-user"></i> Instructor: {{ booking.instructor }}</p>
+        </div>
+    </div>
+
+    <div style="background: #f5fcff; border-radius: 20px; padding: clamp(15px, 4vw, 20px); margin-bottom: 25px;">
+        <h3 style="color: #043b50; font-size: clamp(1rem, 4vw, 1.1rem);"><i class="fas fa-info-circle"></i> What's Next?</h3>
+        <ul style="margin-top: 10px; padding-left: 20px; font-size: clamp(0.75rem, 3vw, 0.85rem);">
+            <li>Show this confirmation email on your appointment date</li>
+            <li>Arrive 15 minutes before your scheduled time</li>
+            <li>Bring a valid ID for verification</li>
+            <li>Your instructor will be assigned before your schedule date</li>
+        </ul>
+    </div>
+
+    <div style="text-align: center; display: flex; flex-wrap: wrap; gap: 15px; justify-content: center;">
+        <a href="{{ url_for('dashboard') }}" class="btn-primary" style="display: inline-block; padding: 12px 24px; font-size: clamp(0.85rem, 3.5vw, 1rem); text-decoration: none;">
+            <i class="fas fa-home"></i> Back to Dashboard
+        </a>
+        <button onclick="window.print()" class="btn-secondary" style="padding: 12px 24px; font-size: clamp(0.85rem, 3.5vw, 1rem); cursor: pointer; border: none; border-radius: 50px; background: #6c757d; color: white;">
+            <i class="fas fa-print"></i> Print Confirmation
+        </button>
+    </div>
+</div>
+
+<style>
+    .btn-primary {
+        background: linear-gradient(135deg, #0f5e7a, #1a4b63);
+        color: white;
+        border: none;
+        border-radius: 50px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    }
+
+    .btn-secondary {
+        background: #6c757d;
+        transition: all 0.3s ease;
+    }
+
+    .btn-secondary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        background: #5a6268;
+    }
+
+    @media (max-width: 768px) {
+        .btn-primary, .btn-secondary {
+            flex: 1;
+            min-width: 140px;
+            text-align: center;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .btn-primary, .btn-secondary {
+            width: 100%;
+            padding: 12px 16px;
+        }
+
+        div[style*="display: grid"] {
+            gap: 12px !important;
+        }
+    }
+
+    @media print {
+        .btn-primary, .btn-secondary {
+            display: none;
+        }
+        .glass-panel {
+            box-shadow: none;
+            padding: 0;
+            margin: 0;
+        }
+        body {
+            padding: 0;
+            margin: 0;
+        }
+    }
+</style>
+{% endblock %}

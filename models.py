@@ -18,8 +18,12 @@ class User(db.Model):
     is_verified = db.Column(db.Boolean, default=False)
     verification_code = db.Column(db.String(10))
     verification_code_expires = db.Column(db.DateTime)
-    last_seen = db.Column(db.DateTime, default=datetime.utcnow)
-    created_at = db.Column(db.DateTime, default=lambda: datetime.datetime.now(timezone.utc))
+    last_seen = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
+    created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
+    pdc_available = db.Column(db.Boolean, default=False)
+    has_pdc_booking = db.Column(db.Boolean, default=False)
+    tdc_certificate_generated = db.Column(db.Boolean, default=False)
+    pdc_certificate_generated = db.Column(db.Boolean, default=False)
     appointments = db.relationship('Appointment', backref='user', lazy=True, cascade='all, delete-orphan')
 
     def set_password(self, password):
@@ -36,7 +40,7 @@ class Course(db.Model):
     description = db.Column(db.Text)
     hours = db.Column(db.Integer, default=15)
     price = db.Column(db.Float, nullable=False)
-    vehicle_type = db.Column(db.String(50))  # 2w, 3w, 4w, 6w
+    vehicle_type = db.Column(db.String(50))
     is_active = db.Column(db.Boolean, default=True)
 
 
@@ -49,9 +53,11 @@ class Appointment(db.Model):
     contact_number = db.Column(db.String(50), nullable=False)
     location = db.Column(db.String(100))
     status = db.Column(db.String(50), default='Paid')
-    booking_date = db.Column(db.DateTime, default=lambda: datetime.datetime.now(timezone.utc))
+    booking_date = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
     reference_number = db.Column(db.String(50), unique=True)
     vehicle_type = db.Column(db.String(50), default='4w')
+    tdc_status = db.Column(db.String(20), default='Pending')
+    pdc_status = db.Column(db.String(20), default='Pending')
     payment = db.relationship('Payment', backref='appointment', uselist=False, cascade='all, delete-orphan')
 
 
@@ -73,11 +79,10 @@ class CourseReview(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     course_id = db.Column(db.Integer, db.ForeignKey('course.id'), nullable=False)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id', ondelete='CASCADE'), nullable=False)
     rating = db.Column(db.Integer, nullable=False)
     comment = db.Column(db.Text)
-    created_at = db.Column(db.DateTime, default=lambda: datetime.datetime.now(timezone.utc))
+    created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
 
-    # These relationships let you access user data directly
     course = db.relationship('Course', backref='course_reviews')
     user = db.relationship('User', backref='user_reviews')

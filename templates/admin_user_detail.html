@@ -1,0 +1,421 @@
+{% extends "base.html" %}
+{% block title %}User Details - Admin Dashboard{% endblock %}
+
+{% block content %}
+<div class="glass-panel" style="max-width: 1000px; margin: 20px auto; padding: clamp(15px, 5vw, 30px);">
+    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; margin-bottom: 25px;">
+        <h1 style="color: #043b50; font-size: clamp(1.3rem, 4vw, 1.8rem);">
+            <i class="fas fa-user-circle"></i> Student Information
+        </h1>
+        <a href="{{ url_for('admin_dashboard') }}" class="btn-primary" style="background: #6c757d; padding: 10px 20px; text-decoration: none; font-size: clamp(0.8rem, 3vw, 0.9rem);">
+            <i class="fas fa-arrow-left"></i> Back to Dashboard
+        </a>
+    </div>
+
+    <!-- User Profile Card -->
+    <div style="background: white; border-radius: 25px; padding: clamp(20px, 5vw, 30px); border: 1px solid #b3f0f0; margin-bottom: 30px;">
+        <div style="display: flex; align-items: center; gap: 20px; flex-wrap: wrap; margin-bottom: 25px;">
+            <div style="background: #0f5e7a; width: clamp(60px, 15vw, 80px); height: clamp(60px, 15vw, 80px); border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                <i class="fas fa-user-graduate" style="font-size: clamp(30px, 8vw, 40px); color: white;"></i>
+            </div>
+            <div>
+                <h2 style="color: #043b50; margin: 0; font-size: clamp(1.2rem, 5vw, 1.5rem);">{{ user.full_name or 'N/A' }}</h2>
+                <p style="color: #0f5e7a; margin: 5px 0 0; font-size: clamp(0.8rem, 3vw, 0.9rem);">
+                    <i class="fas fa-at"></i> {{ user.email or 'N/A' }}
+                </p>
+            </div>
+            <div style="margin-left: auto;">
+                <span style="display: inline-block; width: 12px; height: 12px; border-radius: 50%; background: {% if user.is_online %}#28a745{% else %}#dc3545{% endif %}; margin-right: 8px;"></span>
+                <span style="font-weight: 600; font-size: clamp(0.8rem, 3vw, 0.9rem);">{% if user.is_online %}Online{% else %}Offline{% endif %}</span>
+            </div>
+        </div>
+
+        <!-- Certificate Section -->
+        <div style="background: #e3f7fb; border-radius: 15px; padding: 20px; margin-bottom: 20px;">
+            <h3 style="color: #043b50; margin-bottom: 15px; font-size: clamp(1rem, 4vw, 1.1rem);">
+                <i class="fas fa-certificate"></i> Certificates
+            </h3>
+            <div style="display: flex; flex-wrap: wrap; gap: 15px;">
+                <!-- TDC Certificate -->
+                <div style="flex: 1; min-width: 200px; background: white; border-radius: 15px; padding: 15px; text-align: center;">
+                    <i class="fas fa-graduation-cap" style="font-size: clamp(30px, 8vw, 40px); color: #0f5e7a;"></i>
+                    <h4 style="margin: 10px 0; font-size: clamp(0.9rem, 3.5vw, 1rem);">TDC Certificate</h4>
+                    {% set has_passed_tdc = appointments|selectattr('tdc_status', 'equalto', 'Passed')|list|length > 0 %}
+                    {% if has_passed_tdc %}
+                        {% if user.tdc_certificate_generated %}
+                            <span style="display: inline-block; background: #28a745; color: white; padding: 5px 12px; border-radius: 20px; font-size: 0.75rem; margin-bottom: 10px;">✅ Generated</span>
+                            <a href="{{ url_for('generate_certificate', user_id=user.id, cert_type='TDC') }}" target="_blank" class="btn-primary" style="background: #0f5e7a; padding: 8px 15px; font-size: 0.7rem; text-decoration: none; display: inline-block;">
+                                <i class="fas fa-download"></i> View Certificate
+                            </a>
+                        {% else %}
+                            <form method="POST" action="{{ url_for('generate_certificate', user_id=user.id, cert_type='TDC') }}" style="display: inline;">
+                                <button type="submit" class="btn-primary" style="background: #28a745; padding: 8px 15px; font-size: 0.7rem;">
+                                    <i class="fas fa-download"></i> Generate Certificate
+                                </button>
+                            </form>
+                        {% endif %}
+                    {% else %}
+                        <span style="color: #6c757d; font-size: 0.75rem;">Not yet passed TDC</span>
+                    {% endif %}
+                </div>
+
+                <!-- PDC Certificate -->
+                <div style="flex: 1; min-width: 200px; background: white; border-radius: 15px; padding: 15px; text-align: center;">
+                    <i class="fas fa-car" style="font-size: clamp(30px, 8vw, 40px); color: #fd7e14;"></i>
+                    <h4 style="margin: 10px 0; font-size: clamp(0.9rem, 3.5vw, 1rem);">PDC Certificate</h4>
+                    {% set has_passed_pdc = appointments|selectattr('pdc_status', 'equalto', 'Passed')|list|length > 0 %}
+                    {% if has_passed_pdc %}
+                        {% if user.pdc_certificate_generated %}
+                            <span style="display: inline-block; background: #28a745; color: white; padding: 5px 12px; border-radius: 20px; font-size: 0.75rem; margin-bottom: 10px;">✅ Generated</span>
+                            <a href="{{ url_for('generate_certificate', user_id=user.id, cert_type='PDC') }}" target="_blank" class="btn-primary" style="background: #0f5e7a; padding: 8px 15px; font-size: 0.7rem; text-decoration: none; display: inline-block;">
+                                <i class="fas fa-download"></i> View Certificate
+                            </a>
+                        {% else %}
+                            <form method="POST" action="{{ url_for('generate_certificate', user_id=user.id, cert_type='PDC') }}" style="display: inline;">
+                                <button type="submit" class="btn-primary" style="background: #28a745; padding: 8px 15px; font-size: 0.7rem;">
+                                    <i class="fas fa-download"></i> Generate Certificate
+                                </button>
+                            </form>
+                        {% endif %}
+                    {% else %}
+                        <span style="color: #6c757d; font-size: 0.75rem;">Not yet passed PDC</span>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- PDC Availability Status -->
+        <div style="background: {% if user.pdc_available %}#d4edda{% else %}#f8d7da{% endif %}; padding: 15px; border-radius: 15px; margin-bottom: 20px; text-align: center;">
+            <strong style="color: {% if user.pdc_available %}#155724{% else %}#721c24{% endif %}; font-size: clamp(0.8rem, 3vw, 0.9rem);">
+                <i class="fas fa-car"></i> PDC (Practical Driving Course):
+                {% if user.pdc_available %}
+                    ✅ Available - Student passed TDC
+                {% else %}
+                    🔒 Not Available - Student needs to pass TDC first
+                {% endif %}
+            </strong>
+        </div>
+
+        <!-- User Details Grid -->
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px;">
+            <div style="background: #f5fcff; padding: 15px; border-radius: 15px;">
+                <h3 style="color: #0f5e7a; margin: 0 0 15px 0; font-size: clamp(0.9rem, 3vw, 1rem);">
+                    <i class="fas fa-id-card"></i> Personal Information
+                </h3>
+                <div style="margin-bottom: 12px;">
+                    <strong style="color: #043b50;">Username:</strong>
+                    <p style="margin: 5px 0 0; color: #333; font-size: clamp(0.8rem, 3vw, 0.9rem);">{{ user.username or 'N/A' }}</p>
+                </div>
+                <div style="margin-bottom: 12px;">
+                    <strong style="color: #043b50;">Full Name:</strong>
+                    <p style="margin: 5px 0 0; color: #333; font-size: clamp(0.8rem, 3vw, 0.9rem);">{{ user.full_name or 'N/A' }}</p>
+                </div>
+                <div style="margin-bottom: 12px;">
+                    <strong style="color: #043b50;">Phone Number:</strong>
+                    <p style="margin: 5px 0 0; color: #333; font-size: clamp(0.8rem, 3vw, 0.9rem);">{{ user.phone or 'N/A' }}</p>
+                </div>
+            </div>
+
+            <div style="background: #f5fcff; padding: 15px; border-radius: 15px;">
+                <h3 style="color: #0f5e7a; margin: 0 0 15px 0; font-size: clamp(0.9rem, 3vw, 1rem);">
+                    <i class="fas fa-envelope"></i> Account Information
+                </h3>
+                <div style="margin-bottom: 12px;">
+                    <strong style="color: #043b50;">Email Address:</strong>
+                    <p style="margin: 5px 0 0; color: #333; font-size: clamp(0.8rem, 3vw, 0.9rem);">{{ user.email or 'N/A' }}</p>
+                </div>
+                <div style="margin-bottom: 12px;">
+                    <strong style="color: #043b50;">Account Role:</strong>
+                    <p style="margin: 5px 0 0;">
+                        {% if user.is_admin %}
+                        <span style="background: #0f5e7a; color: white; padding: 4px 12px; border-radius: 20px; font-size: 0.7rem;">Administrator</span>
+                        {% else %}
+                        <span style="background: #28a745; color: white; padding: 4px 12px; border-radius: 20px; font-size: 0.7rem;">Student</span>
+                        {% endif %}
+                    </p>
+                </div>
+                <div style="margin-bottom: 12px;">
+                    <strong style="color: #043b50;">Account Created:</strong>
+                    <p style="margin: 5px 0 0; color: #333; font-size: clamp(0.8rem, 3vw, 0.9rem);">{{ user.created_at.strftime('%B %d, %Y') if user.created_at else 'N/A' }}</p>
+                </div>
+                <div>
+                    <strong style="color: #043b50;">Last Active:</strong>
+                    <p style="margin: 5px 0 0; color: #333; font-size: clamp(0.8rem, 3vw, 0.9rem);">{{ user.last_seen.strftime('%B %d, %Y') if user.last_seen else 'Never' }}</p>
+                </div>
+            </div>
+
+            <div style="background: #f5fcff; padding: 15px; border-radius: 15px;">
+                <h3 style="color: #0f5e7a; margin: 0 0 15px 0; font-size: clamp(0.9rem, 3vw, 1rem);">
+                    <i class="fas fa-shield-alt"></i> Verification Status
+                </h3>
+                <div style="margin-bottom: 12px;">
+                    <strong style="color: #043b50;">Email Verified:</strong>
+                    <p style="margin: 5px 0 0;">
+                        {% if user.is_verified %}
+                        <span style="color: #28a745; font-size: 0.8rem;"><i class="fas fa-check-circle"></i> Verified</span>
+                        {% else %}
+                        <span style="color: #dc3545; font-size: 0.8rem;"><i class="fas fa-times-circle"></i> Not Verified</span>
+                        {% endif %}
+                    </p>
+                </div>
+                <div>
+                    <strong style="color: #043b50;">Login Method:</strong>
+                    <p style="margin: 5px 0 0;">
+                        {% if user.google_id %}
+                        <span style="color: #4285F4; font-size: 0.8rem;"><i class="fab fa-google"></i> Google Account</span>
+                        {% else %}
+                        <span style="color: #0f5e7a; font-size: 0.8rem;"><i class="fas fa-key"></i> Email/Password</span>
+                        {% endif %}
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- User's Appointments Section -->
+    <h2 style="color: #043b50; margin: 30px 0 15px; font-size: clamp(1.2rem, 4.5vw, 1.5rem);">
+        <i class="fas fa-calendar-alt"></i> Student's Appointments
+        <small style="font-size: 0.7rem; color: #666;">({{ appointments|length }} total)</small>
+    </h2>
+
+    <div class="table-container" style="overflow-x: auto; max-height: 400px; overflow-y: auto; margin: 15px 0; border-radius: 20px;">
+        <table class="admin-table" style="width: 100%; min-width: 900px; border-collapse: collapse;">
+            <thead style="position: sticky; top: 0; background: #0f5e7a; z-index: 10;">
+                <tr style="background: #0f5e7a; color: white;">
+                    <th style="padding: 12px; font-size: 0.8rem;">Course Type</th>
+                    <th style="padding: 12px; font-size: 0.8rem;">Reference #</th>
+                    <th style="padding: 12px; font-size: 0.8rem;">Booking Date</th>
+                    <th style="padding: 12px; font-size: 0.8rem;">Vehicle</th>
+                    <th style="padding: 12px; font-size: 0.8rem;">Amount</th>
+                    <th style="padding: 12px; font-size: 0.8rem;">Status</th>
+                    <th style="padding: 12px; font-size: 0.8rem;">Action</th>
+                    <th style="padding: 12px; font-size: 0.8rem;">Receipt</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for apt in appointments %}
+                <tr style="border-bottom: 1px solid #cce7f0;">
+                    <td style="padding: 12px;">
+                        {% if apt.reference_number and apt.reference_number[:3] == 'PDC' %}
+                            <span style="background: #fd7e14; color: white; padding: 4px 10px; border-radius: 20px; font-size: 0.7rem;">🚗 PDC</span>
+                        {% else %}
+                            <span style="background: #0f5e7a; color: white; padding: 4px 10px; border-radius: 20px; font-size: 0.7rem;">📘 TDC</span>
+                        {% endif %}
+                    </td>
+                    <td style="padding: 12px; font-weight: 600; font-size: 0.8rem;">{{ apt.reference_number or 'N/A' }}</td>
+                    <td style="padding: 12px; font-size: 0.75rem;">{{ apt.booking_date.strftime('%Y-%m-%d') if apt.booking_date else 'N/A' }}</td>
+                    <td style="padding: 12px; font-size: 0.75rem;">{{ apt.vehicle_type or 'Car' }}</td>
+                    <td style="padding: 12px; font-weight: 600; color: #28a745; font-size: 0.75rem;">
+                        {% if apt.payment %}₱{{ "%.2f"|format(apt.payment.amount) }}{% else %}₱0.00{% endif %}
+                    </td>
+                    <td style="padding: 12px;">
+                        {% if apt.reference_number and apt.reference_number[:3] == 'PDC' %}
+                            <span style="background:
+                                {% if apt.pdc_status == 'Passed' %}#28a745
+                                {% elif apt.pdc_status == 'Failed' %}#dc3545
+                                {% elif apt.pdc_status == 'Not Attended' %}#ffc107
+                                {% else %}#6c757d{% endif %};
+                                color: white; padding: 4px 10px; border-radius: 20px; font-size: 0.7rem;">
+                                {{ apt.pdc_status or 'Pending' }}
+                            </span>
+                        {% else %}
+                            <span style="background:
+                                {% if apt.tdc_status == 'Passed' %}#28a745
+                                {% elif apt.tdc_status == 'Failed' %}#dc3545
+                                {% elif apt.tdc_status == 'Not Attended' %}#ffc107
+                                {% else %}#6c757d{% endif %};
+                                color: white; padding: 4px 10px; border-radius: 20px; font-size: 0.7rem;">
+                                {{ apt.tdc_status or 'Pending' }}
+                            </span>
+                        {% endif %}
+                    </td>
+                    <td style="padding: 12px;">
+                        {% if apt.reference_number and apt.reference_number[:3] == 'PDC' %}
+                            {% if apt.pdc_status == 'Passed' %}
+                                <span style="background: #28a745; color: white; padding: 5px 10px; border-radius: 5px; font-size: 0.7rem;">
+                                    <i class="fas fa-lock"></i> Finalized
+                                </span>
+                            {% else %}
+                                <div style="display: flex; gap: 5px; flex-wrap: wrap;">
+                                    <button type="button" onclick="confirmPdcStatusChange({{ apt.id }}, {{ user.id }}, 'Passed')" class="status-btn passed" style="background: #28a745; color: white; border: none; padding: 5px 8px; border-radius: 5px; cursor: pointer; font-size: 0.7rem;">
+                                        <i class="fas fa-check"></i> Passed
+                                    </button>
+                                    <button type="button" onclick="confirmPdcStatusChange({{ apt.id }}, {{ user.id }}, 'Failed')" class="status-btn failed" style="background: #dc3545; color: white; border: none; padding: 5px 8px; border-radius: 5px; cursor: pointer; font-size: 0.7rem;">
+                                        <i class="fas fa-times"></i> Failed
+                                    </button>
+                                    <button type="button" onclick="confirmPdcStatusChange({{ apt.id }}, {{ user.id }}, 'Not Attended')" class="status-btn absent" style="background: #ffc107; color: #043b50; border: none; padding: 5px 8px; border-radius: 5px; cursor: pointer; font-size: 0.7rem;">
+                                        <i class="fas fa-user-slash"></i> Not Attended
+                                    </button>
+                                </div>
+                            {% endif %}
+                        {% else %}
+                            {% if apt.tdc_status == 'Passed' %}
+                                <span style="background: #28a745; color: white; padding: 5px 10px; border-radius: 5px; font-size: 0.7rem;">
+                                    <i class="fas fa-lock"></i> Finalized
+                                </span>
+                            {% else %}
+                                <div style="display: flex; gap: 5px; flex-wrap: wrap;">
+                                    <button type="button" onclick="confirmStatusChange({{ apt.id }}, {{ user.id }}, 'Passed')" class="status-btn passed" style="background: #28a745; color: white; border: none; padding: 5px 8px; border-radius: 5px; cursor: pointer; font-size: 0.7rem;">
+                                        <i class="fas fa-check"></i> Passed
+                                    </button>
+                                    <button type="button" onclick="confirmStatusChange({{ apt.id }}, {{ user.id }}, 'Failed')" class="status-btn failed" style="background: #dc3545; color: white; border: none; padding: 5px 8px; border-radius: 5px; cursor: pointer; font-size: 0.7rem;">
+                                        <i class="fas fa-times"></i> Failed
+                                    </button>
+                                    <button type="button" onclick="confirmStatusChange({{ apt.id }}, {{ user.id }}, 'Not Attended')" class="status-btn absent" style="background: #ffc107; color: #043b50; border: none; padding: 5px 8px; border-radius: 5px; cursor: pointer; font-size: 0.7rem;">
+                                        <i class="fas fa-user-slash"></i> Not Attended
+                                    </button>
+                                </div>
+                            {% endif %}
+                        {% endif %}
+                    </td>
+                    <td style="padding: 12px; text-align: center;">
+                        <a href="{{ url_for('booking_receipt', ref=apt.reference_number) }}" target="_blank" style="color: #0f5e7a; font-size: 0.7rem;">
+                            <i class="fas fa-print"></i> View
+                        </a>
+                    </td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="8" style="text-align: center; padding: 40px;">No appointments found for this student.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div style="margin-top: 25px; display: flex; gap: 15px; justify-content: flex-end;">
+        <a href="{{ url_for('admin_dashboard') }}" class="btn-primary" style="background: #6c757d; text-decoration: none; padding: 10px 20px; font-size: 0.85rem;">
+            <i class="fas fa-arrow-left"></i> Back to Dashboard
+        </a>
+    </div>
+</div>
+
+<!-- Confirmation Modal -->
+<div id="confirmModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; justify-content: center; align-items: center;">
+    <div style="background: white; border-radius: 20px; padding: clamp(20px, 5vw, 30px); max-width: 400px; text-align: center; margin: 20px;">
+        <i class="fas fa-question-circle" style="font-size: 50px; color: #ffc107; margin-bottom: 20px;"></i>
+        <h3 style="color: #043b50; margin-bottom: 15px; font-size: 1.2rem;">Confirm Status Change</h3>
+        <p id="confirmMessage" style="color: #666; margin-bottom: 25px;">Are you sure you want to change the status?</p>
+        <p id="warningMessage" style="color: #dc3545; font-size: 14px; margin-bottom: 25px; display: none;">
+            <i class="fas fa-exclamation-triangle"></i> Once changed, this status cannot be modified again.
+        </p>
+        <div style="display: flex; gap: 15px; justify-content: center;">
+            <button id="confirmSubmitBtn" class="btn-primary" style="background: #28a745; padding: 10px 20px;">
+                <i class="fas fa-check"></i> Yes, Proceed
+            </button>
+            <button onclick="closeModal()" class="btn-primary" style="background: #6c757d; padding: 10px 20px;">
+                <i class="fas fa-times"></i> No, Cancel
+            </button>
+        </div>
+    </div>
+</div>
+
+<script>
+    let pendingAppointmentId = null;
+    let pendingUserId = null;
+    let pendingStatus = null;
+    let isPdcStatus = false;
+
+    function confirmStatusChange(appointmentId, userId, status) {
+        pendingAppointmentId = appointmentId;
+        pendingUserId = userId;
+        pendingStatus = status;
+        isPdcStatus = false;
+
+        let message = "";
+        let showWarning = false;
+
+        if (status === 'Passed') {
+            message = "Are you sure you want to mark this TDC as <strong>PASSED</strong>?";
+            showWarning = true;
+        } else if (status === 'Failed') {
+            message = "Are you sure you want to mark this TDC as <strong>FAILED</strong>? They will need to retake the exam.";
+        } else if (status === 'Not Attended') {
+            message = "Are you sure you want to mark this TDC as <strong>NOT ATTENDED</strong>? They will need to reschedule and retake.";
+        }
+
+        document.getElementById('confirmMessage').innerHTML = message;
+        document.getElementById('warningMessage').style.display = showWarning ? 'block' : 'none';
+
+        const submitBtn = document.getElementById('confirmSubmitBtn');
+        submitBtn.onclick = function() { submitStatus(); };
+
+        document.getElementById('confirmModal').style.display = 'flex';
+    }
+
+    function confirmPdcStatusChange(appointmentId, userId, status) {
+        pendingAppointmentId = appointmentId;
+        pendingUserId = userId;
+        pendingStatus = status;
+        isPdcStatus = true;
+
+        let message = "";
+        let showWarning = false;
+
+        if (status === 'Passed') {
+            message = "Are you sure you want to mark this PDC as <strong>PASSED</strong>? This will generate the PDC certificate.";
+            showWarning = true;
+        } else if (status === 'Failed') {
+            message = "Are you sure you want to mark this PDC as <strong>FAILED</strong>? Student will need to retake the course.";
+        } else if (status === 'Not Attended') {
+            message = "Are you sure you want to mark this PDC as <strong>NOT ATTENDED</strong>? Student will need to reschedule.";
+        }
+
+        document.getElementById('confirmMessage').innerHTML = message;
+        document.getElementById('warningMessage').style.display = showWarning ? 'block' : 'none';
+
+        const submitBtn = document.getElementById('confirmSubmitBtn');
+        submitBtn.onclick = function() { submitPdcStatus(); };
+
+        document.getElementById('confirmModal').style.display = 'flex';
+    }
+
+    function submitStatus() {
+        if (pendingAppointmentId && pendingUserId && pendingStatus) {
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = `/admin/user/${pendingUserId}/appointment/${pendingAppointmentId}/update-status`;
+            const input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = 'status';
+            input.value = pendingStatus;
+            form.appendChild(input);
+            document.body.appendChild(form);
+            form.submit();
+        }
+    }
+
+    function submitPdcStatus() {
+        if (pendingAppointmentId && pendingUserId && pendingStatus) {
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = `/admin/user/${pendingUserId}/appointment/${pendingAppointmentId}/update-pdc-status`;
+            const input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = 'status';
+            input.value = pendingStatus;
+            form.appendChild(input);
+            document.body.appendChild(form);
+            form.submit();
+        }
+    }
+
+    function closeModal() {
+        document.getElementById('confirmModal').style.display = 'none';
+        pendingAppointmentId = null;
+        pendingUserId = null;
+        pendingStatus = null;
+        isPdcStatus = false;
+    }
+</script>
+
+<style>
+    .status-btn:hover { transform: translateY(-2px); transition: all 0.3s ease; opacity: 0.9; }
+    .admin-table tr:hover { background: #f5fcff; }
+    @media (max-width: 768px) {
+        .glass-panel { padding: 15px !important; }
+        .admin-table th, .admin-table td { padding: 8px !important; font-size: 0.65rem !important; }
+        .status-btn { padding: 3px 5px !important; font-size: 0.55rem !important; }
+    }
+</style>
+{% endblock %}

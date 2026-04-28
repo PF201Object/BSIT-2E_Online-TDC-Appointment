@@ -1,0 +1,158 @@
+{% extends "base.html" %}
+{% block title %}{{ cert_type }} Certificate - EcoDrive Theory{% endblock %}
+
+{% block content %}
+<div class="certificate-container" style="max-width: 800px; margin: 20px auto; padding: 20px;">
+    <!-- Certificate Card -->
+    <div class="certificate-card" style="background: white; border-radius: 20px; padding: 40px; text-align: center; border: 2px solid #0f5e7a; box-shadow: 0 10px 30px rgba(0,0,0,0.1);">
+
+        <!-- LTO Logo / Header -->
+        <div style="border-bottom: 2px solid #0f5e7a; padding-bottom: 20px; margin-bottom: 30px;">
+            <i class="fas fa-car" style="font-size: 60px; color: #0f5e7a;"></i>
+            <h1 style="color: #043b50; margin: 10px 0 5px; font-size: 32px;">EcoDrive Theory</h1>
+            <p style="color: #0f5e7a; font-size: 14px;">LTO Accredited Driving School</p>
+        </div>
+
+        <!-- Certificate Title -->
+        <div style="margin-bottom: 30px;">
+            <i class="fas fa-certificate" style="font-size: 80px; color: #fd7e14;"></i>
+            <h2 style="color: #043b50; margin-top: 10px; font-size: 28px;">Certificate of Completion</h2>
+            <p style="color: #666; font-size: 16px;">This certifies that</p>
+        </div>
+
+        <!-- Student Name -->
+        <h1 style="color: #28a745; font-size: 36px; margin: 20px 0; font-weight: 600;">{{ user.full_name or user.username }}</h1>
+
+        <!-- Course Details -->
+        <p style="font-size: 18px; color: #333;">
+            has successfully completed the
+        </p>
+        <h3 style="color: #0f5e7a; font-size: 28px; margin: 15px 0;">
+            {% if cert_type == 'TDC' %}
+                Theoretical Driving Course (TDC)
+            {% else %}
+                Practical Driving Course (PDC)
+            {% endif %}
+        </h3>
+        <p style="font-size: 16px; color: #666;">
+            with a total of {% if cert_type == 'TDC' %}15 hours{% else %}8 hours{% endif %} of training
+        </p>
+
+        <!-- Date and Certificate Number -->
+        <div style="margin-top: 40px; padding-top: 20px; border-top: 1px solid #cce7f0;">
+            <p style="color: #666; font-size: 14px;">
+                Issued on: <strong>{{ date.strftime('%B %d, %Y') if date else 'N/A' }}</strong>
+            </p>
+            <p style="color: #666; font-size: 14px;">
+                Certificate No: <strong>{{ certificate_number }}</strong>
+            </p>
+        </div>
+
+        <!-- Signatures -->
+        <div style="margin-top: 50px; display: flex; justify-content: space-between; align-items: flex-end;">
+            <div style="text-align: center; width: 200px;">
+                <div style="border-top: 1px solid #333; margin-top: 30px; width: 100%;"></div>
+                <p style="margin: 10px 0 0; font-size: 12px;">LTO Accredited Instructor</p>
+            </div>
+            <div style="text-align: center; width: 200px;">
+                <div style="border-top: 1px solid #333; margin-top: 30px; width: 100%;"></div>
+                <p style="margin: 10px 0 0; font-size: 12px;">School Director</p>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div style="margin-top: 40px; background: #0f5e7a; color: white; padding: 15px; border-radius: 10px;">
+            <p style="margin: 0; font-size: 12px;">This certificate is the property of EcoDrive Theory and is non-transferable</p>
+        </div>
+
+        <!-- Print Button -->
+        <div class="no-print" style="margin-top: 25px; display: flex; gap: 15px; justify-content: center; flex-wrap: wrap;">
+            <button onclick="window.print()" class="btn-primary" style="padding: 12px 24px; cursor: pointer; background: #0f5e7a; color: white; border: none; border-radius: 5px;">
+                <i class="fas fa-print"></i> Print Certificate
+            </button>
+            <a href="{{ url_for('dashboard') }}" class="btn-secondary" style="padding: 12px 24px; background: #6c757d; color: white; text-decoration: none; border-radius: 5px;">
+                <i class="fas fa-arrow-left"></i> Back to Dashboard
+            </a>
+            {% if session.is_admin %}
+            <a href="{{ url_for('admin_user_detail', user_id=user.id) }}" class="btn-secondary" style="padding: 12px 24px; background: #0f5e7a; color: white; text-decoration: none; border-radius: 5px;">
+                <i class="fas fa-users"></i> Back to User Details
+            </a>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Print-specific styles */
+    @media print {
+        /* Hide everything except the certificate */
+        .no-print,
+        .btn-primary,
+        .btn-secondary,
+        header,
+        nav,
+        footer,
+        .glass-panel > *:not(.certificate-container) {
+            display: none !important;
+        }
+
+        /* Reset body for print */
+        body {
+            background: white !important;
+            margin: 0 !important;
+            padding: 0 !important;
+        }
+
+        /* Certificate container */
+        .certificate-container {
+            margin: 0 !important;
+            padding: 0 !important;
+            max-width: 100% !important;
+        }
+
+        /* Certificate card */
+        .certificate-card {
+            border: 1px solid #ddd !important;
+            box-shadow: none !important;
+            padding: 20px !important;
+            margin: 0 !important;
+            border-radius: 0 !important;
+        }
+
+        /* Force colors for print */
+        .certificate-card,
+        div[style*="background: white"],
+        div[style*="background: #0f5e7a"] {
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+        }
+
+        /* Ensure borders print */
+        div[style*="border-bottom"],
+        div[style*="border-top"] {
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+        }
+    }
+
+    /* Mobile Responsive */
+    @media (max-width: 768px) {
+        .certificate-card {
+            padding: 20px !important;
+        }
+        h1[style*="font-size: 32px"] {
+            font-size: 24px !important;
+        }
+        h1[style*="font-size: 36px"] {
+            font-size: 28px !important;
+        }
+        h3[style*="font-size: 28px"] {
+            font-size: 22px !important;
+        }
+        .btn-primary, .btn-secondary {
+            padding: 8px 16px !important;
+            font-size: 12px !important;
+        }
+    }
+</style>
+{% endblock %}

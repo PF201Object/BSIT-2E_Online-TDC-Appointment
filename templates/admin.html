@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% block title %}Admin Dashboard - EcoDrive Theory{% endblock %}
+{% block title %}Admin Dashboard{% endblock %}
 
 {% block content %}
 <div class="glass-panel">
@@ -84,7 +84,7 @@
         </a>
     </div>
 
-    <!-- Recent Appointments Section with Search -->
+     <!-- Recent Appointments Section with Search -->
     <h2 style="color: #043b50; margin: 30px 0 15px;">
         <i class="fas fa-calendar-check"></i> Recent Appointments &nbsp;
         <small style="font-size: 0.8rem; color: #666;">Scroll to see more ↓</small>
@@ -99,57 +99,82 @@
 
     <!-- Scrollable Appointments Table -->
     <div class="table-container" style="overflow-x: auto; max-height: 400px; overflow-y: auto; margin: 15px 0; border-radius: 20px;">
-        <table class="admin-table" id="appointmentsTable" style="width: 100%; min-width: 700px; border-collapse: collapse;">
+        <table class="admin-table" id="appointmentsTable" style="width: 100%; min-width: 800px; border-collapse: collapse;">
             <thead style="position: sticky; top: 0; background: #0f5e7a; z-index: 10;">
                 <tr style="background: #0f5e7a; color: white;">
-                    <th style="padding: 12px; text-align: left;">Ref #</th>
-                    <th style="padding: 12px; text-align: left;">Student</th>
-                    <th style="padding: 12px; text-align: left;">Contact</th>
-                    <th style="padding: 12px; text-align: left;">Date</th>
-                    <th style="padding: 12px; text-align: left;">Vehicle</th>
-                    <th style="padding: 12px; text-align: left;">Amount</th>
-                    <th style="padding: 12px; text-align: left;">Status</th>
+                    <th style="padding: 12px;">Course Type</th>
+                    <th style="padding: 12px;">Ref #</th>
+                    <th style="padding: 12px;">Student</th>
+                    <th style="padding: 12px;">Contact</th>
+                    <th style="padding: 12px;">Date</th>
+                    <th style="padding: 12px;">Vehicle</th>
+                    <th style="padding: 12px;">Amount</th>
+                    <th style="padding: 12px;">Status</th>
                 </tr>
             </thead>
             <tbody>
+                <!-- TDC Appointments -->
                 {% for apt in recent_appointments %}
                 <tr style="border-bottom: 1px solid #cce7f0;">
-                    <td style="padding: 12px; font-weight: 600;" data-search="{{ apt.reference_number or '' }}">{{ apt.reference_number or 'N/A' }}</td>
-                    <td style="padding: 12px;" data-search="{{ apt.full_name or '' }} {{ apt.email or '' }}">
+                    <td style="padding: 12px;">
+                        <span style="background: #0f5e7a; color: white; padding: 4px 10px; border-radius: 20px; font-size: 0.7rem;">📘 TDC</span>
+                    </td>
+                    <td style="padding: 12px; font-weight: 600;">{{ apt.reference_number or 'N/A' }}</td>
+                    <td style="padding: 12px;">
                         {{ apt.full_name or 'N/A' }}<br>
                         <small style="color: #0f5e7a;">{{ apt.email or 'N/A' }}</small>
                     </td>
-                    <td style="padding: 12px;" data-search="{{ apt.contact_number or '' }}">{{ apt.contact_number or 'N/A' }}</td>
+                    <td style="padding: 12px;">{{ apt.contact_number or 'N/A' }}</td>
                     <td style="padding: 12px;">{{ apt.booking_date.strftime('%Y-%m-%d') if apt.booking_date else 'N/A' }}</td>
                     <td style="padding: 12px;">
                         {% set vehicle_names = {'2w': 'Motorcycle', '3w': 'Tricycle', '4w': 'Car', '6w': 'Truck/Bus'} %}
                         {{ vehicle_names.get(apt.vehicle_type, 'Car') if apt.vehicle_type else 'Car' }}
                     </td>
                     <td style="padding: 12px; font-weight: 600; color: #28a745;">
-                        {% if apt.payment %}
-                            ₱{{ "%.2f"|format(apt.payment.amount) }}
-                        {% else %}
-                            ₱0.00
-                        {% endif %}
+                        {% if apt.payment %}₱{{ "%.2f"|format(apt.payment.amount) }}{% else %}₱0.00{% endif %}
                     </td>
                     <td style="padding: 12px;">
-                        <span style="background: {% if apt.status == 'Paid' %}#28a745{% else %}#ffc107{% endif %};
-                                   color: {% if apt.status == 'Paid' %}white{% else %}#043b50{% endif %};
-                                   padding: 4px 12px; border-radius: 20px; font-size: 0.8rem;">
+                        <span style="background: {% if apt.status == 'Paid' %}#28a745{% else %}#ffc107{% endif %}; color: white; padding: 4px 12px; border-radius: 20px;">
                             {% if apt.status == 'Paid' %}✅ Booked{% else %}{{ apt.status }}{% endif %}
                         </span>
                     </td>
                 </tr>
-                {% else %}
-                <tr>
-                    <td colspan="7" style="text-align: center; padding: 40px;">No appointments found.</td>
-                </tr>
                 {% endfor %}
+
+                <!-- PDC Appointments -->
+                {% for booking in pdc_bookings %}
+                <tr style="border-bottom: 1px solid #cce7f0;">
+                    <td style="padding: 12px;">
+                        <span style="background: #fd7e14; color: white; padding: 4px 10px; border-radius: 20px; font-size: 0.7rem;">🚗 PDC</span>
+                    </td>
+                    <td style="padding: 12px; font-weight: 600;">{{ booking.reference_number or 'N/A' }}</td>
+                    <td style="padding: 12px;">
+                        {{ booking.full_name or 'N/A' }}<br>
+                        <small style="color: #0f5e7a;">{{ booking.email or 'N/A' }}</small>
+                    </td>
+                    <td style="padding: 12px;">{{ booking.contact_number or 'N/A' }}</td>
+                    <td style="padding: 12px;">{{ booking.schedule_date or 'N/A' }}</td>
+                    <td style="padding: 12px;">
+                        {% set vehicle_names = {'2w': 'Motorcycle', '3w': 'Tricycle', '4w': 'Car', '6w': 'Truck/Bus'} %}
+                        {{ vehicle_names.get(booking.vehicle_type, 'Car') if booking.vehicle_type else 'Car' }}
+                    </td>
+                    <td style="padding: 12px; font-weight: 600; color: #28a745;">₱{{ "%.2f"|format(booking.price or 0) }}</td>
+                    <td style="padding: 12px;">
+                        <span style="background: #28a745; color: white; padding: 4px 12px; border-radius: 20px;">✅ Confirmed</span>
+                    </td>
+                更
+                {% endfor %}
+
+                {% if not recent_appointments and not pdc_bookings %}
+                <tr>
+                    <td colspan="8" style="text-align: center; padding: 40px;">No appointments found.</td>
+                </tr>
+                {% endif %}
             </tbody>
         </table>
     </div>
 
-    <!-- Recent Users Section with Search -->
+     <!-- Recent Users Section with Search -->
     <h2 style="color: #043b50; margin: 30px 0 15px;">
         <i class="fas fa-user-graduate"></i> Recent Users &nbsp;
         <small style="font-size: 0.8rem; color: #666;">Scroll to see more ↓</small>
@@ -162,9 +187,9 @@
         <button onclick="clearUserSearch()" style="padding: 12px 24px; background: #6c757d; color: white; border: none; border-radius: 10px; cursor: pointer;">Clear</button>
     </div>
 
-    <!-- Scrollable Users Table with Online/Offline Status -->
+    <!-- Scrollable Users Table with Online/Offline Status, View Button, and Delete Button -->
     <div class="table-container" style="overflow-x: auto; max-height: 400px; overflow-y: auto; margin: 15px 0; border-radius: 20px;">
-        <table class="admin-table" id="usersTable" style="width: 100%; min-width: 600px; border-collapse: collapse;">
+        <table class="admin-table" id="usersTable" style="width: 100%; min-width: 750px; border-collapse: collapse;">
             <thead style="position: sticky; top: 0; background: #0f5e7a; z-index: 10;">
                 <tr style="background: #0f5e7a; color: white;">
                     <th style="padding: 12px; text-align: left;">Status</th>
@@ -174,16 +199,18 @@
                     <th style="padding: 12px; text-align: left;">Phone</th>
                     <th style="padding: 12px; text-align: left;">Last Active</th>
                     <th style="padding: 12px; text-align: left;">Role</th>
+                    <th style="padding: 12px; text-align: center;">Actions</th>
                 </tr>
             </thead>
             <tbody>
                 {% for user in recent_users %}
-                <td style="padding: 12px;">
-                    <span style="display: inline-block; width: 10px; height: 10px; border-radius: 50%; background: {% if user.is_online %}#28a745{% else %}#dc3545{% endif %}; margin-right: 8px;"></span>
-                    <span style="font-size: 0.8rem; color: {% if user.is_online %}#28a745{% else %}#dc3545{% endif %};">
-                        {% if user.is_online %}Online{% else %}Offline{% endif %}
-                    </span>
-                </td>
+                <tr style="border-bottom: 1px solid #cce7f0;">
+                    <td style="padding: 12px;">
+                        <span style="display: inline-block; width: 10px; height: 10px; border-radius: 50%; background: {% if user.is_online %}#28a745{% else %}#dc3545{% endif %}; margin-right: 8px;"></span>
+                        <span style="font-size: 0.8rem; color: {% if user.is_online %}#28a745{% else %}#dc3545{% endif %};">
+                            {% if user.is_online %}Online{% else %}Offline{% endif %}
+                        </span>
+                    </td>
                     <td style="padding: 12px; font-weight: 600;" data-search="{{ user.username or '' }}">{{ user.username or 'N/A' }}</td>
                     <td style="padding: 12px;" data-search="{{ user.full_name or '' }}">{{ user.full_name or 'N/A' }}</td>
                     <td style="padding: 12px;" data-search="{{ user.email or '' }}">{{ user.email or 'N/A' }}</td>
@@ -202,14 +229,46 @@
                         <span style="background: #28a745; color: white; padding: 4px 12px; border-radius: 20px;">Student</span>
                         {% endif %}
                     </td>
+                    <td style="padding: 12px; text-align: center;">
+                        <div style="display: flex; gap: 8px; justify-content: center; flex-wrap: wrap;">
+                            <a href="{{ url_for('admin_user_detail', user_id=user.id) }}" class="view-btn" style="background: #0f5e7a; color: white; padding: 6px 12px; border-radius: 8px; text-decoration: none; font-size: 0.75rem;">
+                                <i class="fas fa-eye"></i> View
+                            </a>
+                            {% if not user.is_admin %}
+                            <button onclick="confirmDeleteUser({{ user.id }}, '{{ user.username }}')" class="delete-btn" style="background: #dc3545; color: white; border: none; padding: 6px 12px; border-radius: 8px; cursor: pointer; font-size: 0.75rem;">
+                                <i class="fas fa-trash"></i> Delete
+                            </button>
+                            {% endif %}
+                        </div>
+                    </td>
                 </tr>
                 {% else %}
                 <tr>
-                    <td colspan="7" style="text-align: center; padding: 40px;">No users found.</td>
+                    <td colspan="8" style="text-align: center; padding: 40px;">No users found.</td>
                 </tr>
                 {% endfor %}
             </tbody>
         </table>
+    </div>
+</div>
+
+<!-- Delete User Confirmation Modal -->
+<div id="deleteUserModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 10000; justify-content: center; align-items: center;">
+    <div style="background: white; border-radius: 20px; padding: 30px; max-width: 400px; text-align: center; margin: 20px;">
+        <i class="fas fa-exclamation-triangle" style="font-size: 50px; color: #dc3545; margin-bottom: 20px;"></i>
+        <h3 style="color: #043b50; margin-bottom: 15px;">Confirm Delete</h3>
+        <p id="deleteUserMessage" style="color: #666; margin-bottom: 25px;">Are you sure you want to delete this user?</p>
+        <p style="color: #dc3545; font-size: 13px; margin-bottom: 20px;">
+            <i class="fas fa-info-circle"></i> This will also delete all appointments and bookings for this user.
+        </p>
+        <div style="display: flex; gap: 15px; justify-content: center;">
+            <button onclick="submitDeleteUser()" class="btn-primary" style="background: #dc3545; padding: 10px 20px;">
+                <i class="fas fa-trash"></i> Yes, Delete
+            </button>
+            <button onclick="closeDeleteModal()" class="btn-primary" style="background: #6c757d; padding: 10px 20px;">
+                <i class="fas fa-times"></i> Cancel
+            </button>
+        </div>
     </div>
 </div>
 
@@ -424,6 +483,34 @@
     if (document.getElementById('userSearch')) {
         document.getElementById('userSearch').addEventListener('keyup', filterUsers);
     }
+
+    // Delete User functionality
+    let deleteUserId = null;
+    let deleteUsername = null;
+
+    function confirmDeleteUser(userId, username) {
+        deleteUserId = userId;
+        deleteUsername = username;
+        document.getElementById('deleteUserMessage').innerHTML = `Are you sure you want to delete user <strong>${username}</strong>?`;
+        document.getElementById('deleteUserModal').style.display = 'flex';
+    }
+
+    function submitDeleteUser() {
+        if (deleteUserId) {
+            // Create a form and submit to delete user route
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = `/admin/user/${deleteUserId}/delete`;
+            document.body.appendChild(form);
+            form.submit();
+        }
+    }
+
+    function closeDeleteModal() {
+        document.getElementById('deleteUserModal').style.display = 'none';
+        deleteUserId = null;
+        deleteUsername = null;
+    }
 </script>
 
 <style>
@@ -475,6 +562,18 @@
 
     .table-container::-webkit-scrollbar-thumb:hover {
         background: #1a4b63;
+    }
+
+    .view-btn:hover {
+        background: #043b50 !important;
+        transform: translateY(-2px);
+        transition: all 0.3s ease;
+    }
+
+    .delete-btn:hover {
+        background: #c82333 !important;
+        transform: translateY(-2px);
+        transition: all 0.3s ease;
     }
 
     /* Mobile Responsive */

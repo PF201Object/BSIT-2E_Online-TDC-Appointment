@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EcoDrive Theory - {% block title %}Online TDC Booking{% endblock %}</title>
+    <title>EcoDrive -{% block title %}Online TDC Booking{% endblock %}</title>
 
     <!-- ===== FAVICON FOR BROWSER TAB ===== -->
     <link rel="icon" type="image/png" sizes="16x16" href="{{ url_for('static', filename='images/logo1.png') }}">
@@ -16,6 +16,32 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
     <style>
+
+        /* Print styles - hide navigation when printing */
+@media print {
+    .navbar,
+    .footer,
+    .no-print,
+    header,
+    nav,
+    .btn-primary:not(.print-btn),
+    .btn-secondary:not(.print-btn) {
+        display: none !important;
+    }
+
+    body {
+        background: white !important;
+        padding: 0 !important;
+        margin: 0 !important;
+    }
+
+    .glass-panel {
+        padding: 0 !important;
+        margin: 0 !important;
+        box-shadow: none !important;
+    }
+}
+
         /* ===== RESET & BASE STYLES ===== */
         * {
             margin: 0;
@@ -966,7 +992,7 @@
                     <div class="logo-fallback" style="display: none;">
                         <i class="fas fa-car"></i>
                     </div>
-                    <span class="brand-text">EcoDrive Theory</span>
+                    <span class="brand-text">EcoDrive</span>
                 </a>
             </div>
             <div class="nav-links">
@@ -1012,14 +1038,14 @@
 
         <!-- Footer -->
         <footer class="footer">
-            <div class="footer-text">Empowering the next generation of drivers. © 2026 | EcoDrive Theory</div>
+            <div class="footer-text">Empowering the next generation of drivers. © 2026 | EcoDrive</div>
             <div class="footer-logo">
                 <img src="{{ url_for('static', filename='images/.png') }}"
                      alt="EcoDrive Theory Logo"
                      class="footer-logo-img"
                      onerror="this.style.display='none'; this.nextElementSibling.style.display='inline-flex';">
                 <i class="fas fa-car" style="display: none;"></i>
-                <span>EcoDrive Theory</span>
+                <span>EcoDrive</span>
             </div>
             <div class="social-icons">
                 <a href="#"><i class="fab fa-facebook"></i></a>

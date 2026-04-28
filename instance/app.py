@@ -35,14 +35,14 @@ app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {
 }
 
 # ===== EMAIL CONFIGURATION =====
-# Brevo SMTP Settings (works on port 587)
-app.config['MAIL_SERVER'] = 'smtp-relay.brevo.com'
-app.config['MAIL_PORT'] = 587
-app.config['MAIL_USE_TLS'] = True
-app.config['MAIL_USE_SSL'] = False
-app.config['MAIL_USERNAME'] = 'a9715d001@smtp-brevo.com'
-app.config['MAIL_PASSWORD'] = 'xsmtpsib-377f57f3210693814aeaa581906a0edaf19c8d44be3fc3692f6c5f6713a294fc-BmDtPjFknBcNLN6z'
-app.config['MAIL_DEFAULT_SENDER'] = 'ronbell112323@gmail.com'
+# Gmail SMTP Settings
+app.config['MAIL_SERVER'] = 'smtp.gmail.com'
+app.config['MAIL_PORT'] = 465
+app.config['MAIL_USE_TLS'] = False
+app.config['MAIL_USE_SSL'] = True
+app.config['MAIL_USERNAME'] = 'ecodrive.support@gmail.com'
+app.config['MAIL_PASSWORD'] = 'afhe lxbt pjce nqle'
+app.config['MAIL_DEFAULT_SENDER'] = 'ecodrive.support@gmail.com'
 
 # Initialize Mail
 mail = Mail(app)
@@ -56,13 +56,53 @@ def generate_verification_code():
     """Generate a 6-digit verification code"""
     return f"{secrets.randbelow(1000000):06d}"
 
-def send_verification_email(user_email, code, send_email_via_brevo=None):
-    """Send 6-digit verification code via Brevo API (async - uses port 443)"""
-    from brevo_api_email import send_email_via_brevo, create_verification_email
-    print(f"📧 Queuing verification code {code} for {user_email}")
-    html_content = create_verification_email(code)
-    send_email_via_brevo(user_email, "🔐 Email Verification - EcoDrive Theory", html_content)
-    return True
+def send_verification_email(user_email, code):
+    """Send 6-digit verification code to user's email"""
+    try:
+        msg = Message(
+            subject="🔐 Email Verification - EcoDrive Theory",
+            recipients=[user_email],
+            html=f"""
+            <!DOCTYPE html>
+            <html>
+            <head>
+                <meta charset="UTF-8">
+                <title>Email Verification</title>
+                <style>
+                    body {{ font-family: 'Segoe UI', Arial, sans-serif; line-height: 1.6; color: #333; }}
+                    .container {{ max-width: 500px; margin: 0 auto; padding: 20px; }}
+                    .header {{ background: linear-gradient(135deg, #0f5e7a, #1a4b63); color: white; padding: 20px; text-align: center; border-radius: 15px 15px 0 0; }}
+                    .content {{ background: #f5fcff; padding: 25px; border-radius: 0 0 15px 15px; }}
+                    .code {{ font-size: 32px; font-weight: bold; color: #0f5e7a; text-align: center; padding: 20px; letter-spacing: 5px; }}
+                    .footer {{ text-align: center; padding: 15px; color: #666; font-size: 12px; }}
+                </style>
+            </head>
+            <body>
+                <div class="container">
+                    <div class="header">
+                        <h2>🔐 Email Verification</h2>
+                    </div>
+                    <div class="content">
+                        <p>Hello,</p>
+                        <p>Thank you for registering with EcoDrive Theory! Please use the verification code below to complete your registration:</p>
+                        <div class="code">{code}</div>
+                        <p>This code will expire in <strong>10 minutes</strong>.</p>
+                        <p>If you didn't request this, please ignore this email.</p>
+                    </div>
+                    <div class="footer">
+                        <p>© 2026 EcoDrive Theory | LTO Accredited Driving School</p>
+                    </div>
+                </div>
+            </body>
+            </html>
+            """
+        )
+        mail.send(msg)
+        print(f"✅ Verification email sent to {user_email}")
+        return True
+    except Exception as e:
+        print(f"❌ Failed to send verification email: {e}")
+        return False
 # ===== END VERIFICATION CODE HELPER FUNCTIONS =====
 
 # ===== GOOGLE OAUTH CONFIGURATION =====
@@ -206,12 +246,12 @@ def google_callback():
 
 # ===== CERTIFICATE EMAIL NOTIFICATIONS =====
 def send_tdc_certificate_email(user_email, user_name, certificate_link):
-    """Send TDC certificate notification via Brevo API"""
-    from brevo_api_email import send_email_via_brevo
-
-    def send():
-        try:
-            html_content = f"""
+    """Send TDC certificate notification email"""
+    try:
+        msg = Message(
+            subject="🎓 Congratulations! You Passed TDC - EcoDrive Theory",
+            recipients=[user_email],
+            html=f"""
             <!DOCTYPE html>
             <html>
             <head>
@@ -223,42 +263,51 @@ def send_tdc_certificate_email(user_email, user_name, certificate_link):
                     .header {{ background: linear-gradient(135deg, #28a745, #20c997); color: white; padding: 30px; text-align: center; border-radius: 15px 15px 0 0; }}
                     .content {{ background: #f5fcff; padding: 30px; border-radius: 0 0 15px 15px; }}
                     .button {{ display: inline-block; background: #28a745; color: white; padding: 12px 30px; text-decoration: none; border-radius: 30px; margin: 20px 0; }}
+                    .footer {{ text-align: center; padding: 20px; color: #666; font-size: 12px; }}
                 </style>
             </head>
             <body>
                 <div class="container">
-                    <div class="header"><h1>Congratulations!</h1></div>
+                    <div class="header">
+                        <i class="fas fa-trophy" style="font-size: 48px;"></i>
+                        <h1 style="margin: 10px 0 0;">Congratulations!</h1>
+                    </div>
                     <div class="content">
                         <p>Dear <strong>{user_name}</strong>,</p>
-                        <p>You have successfully <strong>PASSED</strong> the Theoretical Driving Course (TDC)!</p>
+                        <p>We are pleased to inform you that you have successfully <strong>PASSED</strong> the Theoretical Driving Course (TDC)!</p>
+                        <p>Your TDC certificate is now available for download.</p>
                         <div style="text-align: center;">
-                            <a href="{certificate_link}" class="button">📄 Download Your TDC Certificate</a>
+                            <a href="{certificate_link}" class="button" style="color: white; text-decoration: none;">📄 Download Your TDC Certificate</a>
                         </div>
                         <p>This certificate is required for your Student Permit application at any LTO office.</p>
                         <p><strong>What's Next?</strong><br>
-                        You are now eligible to enroll in the Practical Driving Course (PDC).</p>
+                        You are now eligible to enroll in the Practical Driving Course (PDC). Visit your dashboard to book your PDC schedule.</p>
+                        <hr>
+                        <p style="font-size: 12px; color: #666;">If the button doesn't work, copy and paste this link into your browser:<br>
+                        {certificate_link}</p>
+                    </div>
+                    <div class="footer">
+                        <p>© 2026 EcoDrive Theory | LTO Accredited Driving School</p>
                     </div>
                 </div>
             </body>
             </html>
             """
-            send_email_via_brevo(user_email, "🎓 Congratulations! You Passed TDC - EcoDrive Theory", html_content)
-            print(f"✅ TDC Certificate email sent to {user_email}")
-        except Exception as e:
-            print(f"❌ Failed to send TDC certificate email: {e}")
-
-    thread = threading.Thread(target=send)
-    thread.start()
-    return True
-
+        )
+        mail.send(msg)
+        print(f"✅ TDC Certificate email sent to {user_email}")
+        return True
+    except Exception as e:
+        print(f"❌ Failed to send TDC certificate email: {e}")
+        return False
 
 def send_pdc_certificate_email(user_email, user_name, certificate_link):
-    """Send PDC certificate notification via Brevo API"""
-    from brevo_api_email import send_email_via_brevo
-
-    def send():
-        try:
-            html_content = f"""
+    """Send PDC certificate notification email"""
+    try:
+        msg = Message(
+            subject="🏆 Congratulations! You Passed PDC - EcoDrive Theory",
+            recipients=[user_email],
+            html=f"""
             <!DOCTYPE html>
             <html>
             <head>
@@ -270,82 +319,105 @@ def send_pdc_certificate_email(user_email, user_name, certificate_link):
                     .header {{ background: linear-gradient(135deg, #fd7e14, #e8590c); color: white; padding: 30px; text-align: center; border-radius: 15px 15px 0 0; }}
                     .content {{ background: #f5fcff; padding: 30px; border-radius: 0 0 15px 15px; }}
                     .button {{ display: inline-block; background: #fd7e14; color: white; padding: 12px 30px; text-decoration: none; border-radius: 30px; margin: 20px 0; }}
+                    .footer {{ text-align: center; padding: 20px; color: #666; font-size: 12px; }}
                 </style>
             </head>
             <body>
                 <div class="container">
-                    <div class="header"><h1>Congratulations Driver!</h1></div>
+                    <div class="header">
+                        <i class="fas fa-car" style="font-size: 48px;"></i>
+                        <h1 style="margin: 10px 0 0;">Congratulations Driver!</h1>
+                    </div>
                     <div class="content">
                         <p>Dear <strong>{user_name}</strong>,</p>
-                        <p>You have successfully <strong>PASSED</strong> the Practical Driving Course (PDC)!</p>
+                        <p>We are thrilled to inform you that you have successfully <strong>PASSED</strong> the Practical Driving Course (PDC)!</p>
+                        <p>Your PDC certificate is now available for download.</p>
                         <div style="text-align: center;">
-                            <a href="{certificate_link}" class="button">📄 Download Your PDC Certificate</a>
+                            <a href="{certificate_link}" class="button" style="color: white; text-decoration: none;">📄 Download Your PDC Certificate</a>
                         </div>
-                        <p>This certificate is required for your Non-Professional Driver's License application.</p>
+                        <p>This certificate is required for your Non-Professional Driver's License application at any LTO office.</p>
+                        <p><strong>Next Steps:</strong><br>
+                        Bring your PDC certificate together with your Student Permit and other requirements to any LTO office to apply for your Non-Professional Driver's License.</p>
+                        <hr>
+                        <p style="font-size: 12px; color: #666;">If the button doesn't work, copy and paste this link into your browser:<br>
+                        {certificate_link}</p>
+                    </div>
+                    <div class="footer">
+                        <p>© 2026 EcoDrive Theory | LTO Accredited Driving School</p>
                     </div>
                 </div>
             </body>
             </html>
             """
-            send_email_via_brevo(user_email, "🏆 Congratulations! You Passed PDC - EcoDrive Theory", html_content)
-            print(f"✅ PDC Certificate email sent to {user_email}")
-        except Exception as e:
-            print(f"❌ Failed to send PDC certificate email: {e}")
-
-    thread = threading.Thread(target=send)
-    thread.start()
-    return True
+        )
+        mail.send(msg)
+        print(f"✅ PDC Certificate email sent to {user_email}")
+        return True
+    except Exception as e:
+        print(f"❌ Failed to send PDC certificate email: {e}")
+        return False
 # ===== END CERTIFICATE EMAIL NOTIFICATIONS =====
 
-# ===== EMAIL HELPER FUNCTION (UPDATED FOR BREVO API) =====
+# ===== EMAIL HELPER FUNCTION =====
 def send_booking_email_background(user_email, user_name, booking_details):
-    """Send booking confirmation email via Brevo API (non-blocking)"""
-    from brevo_api_email import send_email_via_brevo
+    """Send booking confirmation email in background (non-blocking)"""
 
     def send():
-        try:
-            vehicle_names = {'2w': 'Motorcycle', '3w': 'Tricycle', '4w': 'Car', '6w': 'Truck/Bus'}
-            vehicle_display = vehicle_names.get(booking_details.get('vehicle_code', '4w'), 'Car')
+        with app.app_context():
+            try:
+                # Create message inside app context
+                vehicle_names = {'2w': 'Motorcycle', '3w': 'Tricycle', '4w': 'Car', '6w': 'Truck/Bus'}
+                vehicle_display = vehicle_names.get(booking_details.get('vehicle_code', '4w'), 'Car')
 
-            html_content = f"""
-            <!DOCTYPE html>
-            <html>
-            <head><meta charset="UTF-8"><title>Booking Confirmation</title>
-            <style>
-                body {{ font-family: 'Segoe UI', Arial, sans-serif; }}
-                .container {{ max-width: 600px; margin: 0 auto; padding: 20px; }}
-                .header {{ background: linear-gradient(135deg, #0f5e7a, #1a4b63); color: white; padding: 25px; text-align: center; border-radius: 15px 15px 0 0; }}
-                .content {{ background: #f5fcff; padding: 25px; border-radius: 0 0 15px 15px; }}
-                .details {{ background: white; padding: 20px; border-radius: 12px; margin: 20px 0; }}
-                .amount {{ font-size: 28px; font-weight: bold; color: #28a745; }}
-                .checkmark {{ font-size: 48px; margin-bottom: 10px; }}
-                .status-badge {{ background: #28a745; color: white; padding: 5px 15px; border-radius: 20px; }}
-            </style>
-            </head>
-            <body>
-                <div class="container">
-                    <div class="header"><div class="checkmark">✅</div><h2>Booking Confirmed!</h2></div>
-                    <div class="content">
-                        <p>Dear <strong>{user_name}</strong>,</p>
-                        <p>Thank you for choosing EcoDrive Theory! Your booking has been confirmed.</p>
-                        <div class="details">
-                            <p><strong>Reference:</strong> {booking_details['reference']}</p>
-                            <p><strong>Booking Date:</strong> {booking_details['booking_date']}</p>
-                            <p><strong>Vehicle Type:</strong> {vehicle_display}</p>
-                            <p><strong>Location:</strong> {booking_details['location']}</p>
-                            <p><strong>Amount Paid:</strong> <span class="amount">₱{booking_details['amount']}</span></p>
-                            <p><strong>Status:</strong> <span class="status-badge">✅ Booked</span></p>
+                msg = Message(
+                    subject="✅ Booking Confirmation - EcoDrive Theory",
+                    recipients=[user_email],
+                    html=f"""
+                    <!DOCTYPE html>
+                    <html>
+                    <head><meta charset="UTF-8"><title>Booking Confirmation</title>
+                    <style>
+                        body {{ font-family: 'Segoe UI', Arial, sans-serif; }}
+                        .container {{ max-width: 600px; margin: 0 auto; padding: 20px; }}
+                        .header {{ background: linear-gradient(135deg, #0f5e7a, #1a4b63); color: white; padding: 25px; text-align: center; }}
+                        .content {{ background: #f5fcff; padding: 25px; }}
+                        .details {{ background: white; padding: 20px; border-radius: 12px; margin: 20px 0; }}
+                        .amount {{ font-size: 28px; font-weight: bold; color: #28a745; }}
+                        .checkmark {{ font-size: 48px; margin-bottom: 10px; }}
+                        .status-badge {{ background: #28a745; color: white; padding: 5px 15px; border-radius: 20px; }}
+                    </style>
+                    </head>
+                    <body>
+                        <div class="container">
+                            <div class="header"><div class="checkmark">✅</div><h2>Booking Confirmed!</h2></div>
+                            <div class="content">
+                                <p>Dear <strong>{user_name}</strong>,</p>
+                                <p>Thank you for choosing EcoDrive Theory! Your booking has been confirmed.</p>
+                                <div class="details">
+                                    <p><strong>Reference:</strong> {booking_details['reference']}</p>
+                                    <p><strong>Booking Date:</strong> {booking_details['booking_date']}</p>
+                                    <p><strong>Vehicle Type:</strong> {vehicle_display}</p>
+                                    <p><strong>Location:</strong> {booking_details['location']}</p>
+                                    <p><strong>Amount Paid:</strong> <span class="amount">₱{booking_details['amount']}</span></p>
+                                    <p><strong>Status:</strong> <span class="status-badge">✅ Booked</span></p>
+                                </div>
+                                <p>Present this email on your appointment date. Arrive 15 minutes early.</p>
+                            </div>
                         </div>
-                        <p>Present this email on your appointment date. Arrive 15 minutes early.</p>
-                    </div>
-                </div>
-            </body>
-            </html>
-            """
-            send_email_via_brevo(user_email, f"✅ Booking Confirmation - EcoDrive Theory", html_content)
-            print(f"✅ Booking email sent to {user_email}")
-        except Exception as e:
-            print(f"❌ Booking email error: {e}")
+                    </body>
+                    </html>
+                    """
+                )
+                mail.send(msg)
+                print(f"✅ Background email sent to {user_email}")
+                with open('/tmp/ecodrive_email_error.log', 'a') as log:
+                    log.write(f"✅ Email sent successfully to {user_email}\n")
+            except Exception as e:
+                print(f"❌ Background email error: {e}")
+                with open('/tmp/ecodrive_email_error.log', 'a') as log:
+                    log.write(f"ERROR: {str(e)}\n")
+                    import traceback
+                    traceback.print_exc(file=log)
 
     thread = threading.Thread(target=send)
     thread.start()
